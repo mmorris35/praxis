@@ -27,7 +27,7 @@ Praxis is a framework for building domain-specific expert systems that combine:
 
 **This layer is commodity** — anyone with technical skills can ingest documentation.
 
-### Layer 2: Expert Translation
+### Layer 2: Institutional Knowledge (optional)
 
 **Purpose**: Map theoretical requirements to practical implementation.
 
