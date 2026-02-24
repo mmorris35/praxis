@@ -27,8 +27,9 @@ build/
 
 # Data (large files, regenerate via ingest)
 data/chroma/
+# Ignore PDFs in data/pdfs (regenerate via download)
+# But keep example PDFs that are checked in
 data/pdfs/
-*.pdf
 logs/
 
 # OS

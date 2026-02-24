@@ -2,17 +2,19 @@
 
 J-Mo helps mortgage underwriters navigate lending guidelines, agency requirements, and compliance rules.
 
-## Status: Needs Foundation Data
+## Status: Foundation Data Included
 
-### Layer 1 (Foundation) — Data Needed
-- **Fannie Mae Selling Guide**
-- **Freddie Mac Seller/Servicer Guide**
-- **FHA Single Family Housing Policy Handbook (HUD 4000.1)**
-- **VA Lender's Handbook**
-- **USDA Rural Development Guidelines**
-- **TRID/TILA-RESPA requirements**
-- **State-specific lending regulations**
-- **Investor overlays** (org-specific)
+### Layer 1 (Foundation) — Included
+- ✅ **FHA Handbook 4000.1** (6.7MB) — `data/pdfs/FHA_Handbook_4000.1.pdf`
+- ✅ **Freddie Mac Seller/Servicer Guide** (31MB) — `data/pdfs/Freddie_Mac_Seller_Servicer_Guide.pdf`
+- ✅ **USDA HB-1-3555 Guaranteed Loan** (6.8MB) — `data/pdfs/USDA_HB-1-3555_Guaranteed_Loan.pdf`
+
+### Layer 1 (Foundation) — Still Needed
+- ⏳ **Fannie Mae Selling Guide**
+- ⏳ **VA Lender's Handbook**
+- ⏳ **TRID/TILA-RESPA requirements**
+- ⏳ **State-specific lending regulations**
+- ⏳ **Investor overlays** (org-specific)
 
 ### Layer 2 (Expert Translation) — Needed
 - What do underwriters actually check on each loan type?
