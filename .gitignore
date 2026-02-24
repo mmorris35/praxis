@@ -39,3 +39,6 @@ Thumbs.db
 # Temp
 *.tmp
 *.bak
+
+# ChromaDB data is large - regenerate via ingest scripts
+examples/*/data/chroma/
