@@ -1,0 +1,13 @@
+rag:
+  collection: cmmc-guidelines
+  top_k: 12
+  chroma_path: ./data/chroma
+
+llm:
+  model: claude-sonnet-4-20250514
+  temperature: 0.1
+  max_tokens: 2000
+
+server:
+  host: 0.0.0.0
+  port: 8081

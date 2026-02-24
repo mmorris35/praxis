@@ -1,0 +1,204 @@
+{
+    "catalog": {
+        "uuid": "",
+        "metadata": {
+            "title": "Electronic Version of CMMCv2 Controls and Assessment Procedures",
+            "last-modified": "2025-08-12",
+            "version": "0.1",
+            "oscal-version": "1.1.2"
+        },
+        "groups": [
+            {
+                "id": "AC",
+                "class": "family",
+                "title": "Access Control",
+                "controls": [
+                    {
+                        "id": "AC.L2-3.1.1",
+                        "class": "CMMCv2",
+                        "title": "Authorized Access Control [CUI Data]",
+                        "props": [
+                            {
+                                "name": "label",
+                                "value": "AC.L2-3.1.1",
+                                "class": "CMMCv2"
+                            }
+                        ],
+                        "links": [
+                            {
+                                "href": "#7dbd6d9f-29d6-4d1d-9766-f2d77ff3c849",
+                                "rel": "reference"
+                            }
+                        ],
+                        "parts": [
+                            {
+                                "id": "AC.L2-3.1.1_smt",
+                                "name": "statement",
+                                "prose": "Limit system access to authorized users, processes acting on behalf of authorized users, and devices (including other systems)."
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_gdn",
+                                "name": "guidance",
+                                "prose": "Access control policies (e.g., identity- or role-based policies, control matrices, and cryptography) control access between active entities or subjects (i.e., users or processes acting on behalf of users) and passive entities or objects (e.g., devices, files, records, and domains) in systems. Access enforcement mechanisms can be employed at the application and service level to provide increased information security. Other systems include systems internal and external to the organization. This requirement focuses on account management for systems and applications. The definition of and enforcement of access authorizations, other than those determined by account type (e.g., privileged verses [sic] non-privileged) are addressed in requirement 3.1.2 (AC.L2-3.1.2)."
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_obj.a",
+                                "name": "assessment-objective",
+                                "props": [
+                                    {
+                                        "name": "label",
+                                        "value": "[a]",
+                                        "class": "CMMCv2"
+                                    }
+                                ],
+                                "prose": "authorized users are identified;"
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_obj.b",
+                                "name": "assessment-objective",
+                                "props": [
+                                    {
+                                        "name": "label",
+                                        "value": "[b]",
+                                        "class": "CMMCv2"
+                                    }
+                                ],
+                                "prose": "processes acting on behalf of authorized users are identified;"
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_obj.c",
+                                "name": "assessment-objective",
+                                "props": [
+                                    {
+                                        "name": "label",
+                                        "value": "[c]",
+                                        "class": "CMMCv2"
+                                    }
+                                ],
+                                "prose": "devices (and other systems) authorized to connect to the system are identified;"
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_obj.d",
+                                "name": "assessment-objective",
+                                "props": [
+                                    {
+                                        "name": "label",
+                                        "value": "[d]",
+                                        "class": "CMMCv2"
+                                    }
+                                ],
+                                "prose": "system access is limited to authorized users;"
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_obj.e",
+                                "name": "assessment-objective",
+                                "props": [
+                                    {
+                                        "name": "label",
+                                        "value": "[e]",
+                                        "class": "CMMCv2"
+                                    }
+                                ],
+                                "prose": "system access is limited to processes acting on behalf of authorized users; and"
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_obj.f",
+                                "name": "assessment-objective",
+                                "props": [
+                                    {
+                                        "name": "label",
+                                        "value": "[f]",
+                                        "class": "CMMCv2"
+                                    }
+                                ],
+                                "prose": "system access is limited to authorized devices (including other systems)."
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_asm-examine",
+                                "name": "assessment-method",
+                                "props": [
+                                    {
+                                        "name": "method",
+                                        "ns": "http://csrc.nist.gov/ns/rmf",
+                                        "value": "EXAMINE"
+                                    },
+                                    {
+                                        "name": "label",
+                                        "value": "Examine",
+                                        "class": "CMMCv2"
+                                    }
+                                ],
+                                "parts": [
+                                    {
+                                        "name": "assessment-objects",
+                                        "prose": "[SELECT FROM: Access control policy; procedures addressing account management; system security plan; system design documentation; system configuration settings and associated documentation; list of active system accounts and the name of the individual associated with each account; notifications or records of recently transferred, separated, or terminated employees; list of conditions for group and role membership; list of recently disabled system accounts along with the name of the individual associated with each account; access authorization records; account management compliance reviews; system monitoring records; system audit logs and records; list of devices and systems authorized to connect to organizational systems; other relevant documents or records]."
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_asm-interview",
+                                "name": "assessment-method",
+                                "props": [
+                                    {
+                                        "name": "method",
+                                        "ns": "http://csrc.nist.gov/ns/rmf",
+                                        "value": "INTERVIEW"
+                                    },
+                                    {
+                                        "name": "label",
+                                        "value": "Interview",
+                                        "class": "CMMCv2"
+                                    }
+                                ],
+                                "parts": [
+                                    {
+                                        "name": "assessment-objects",
+                                        "prose": "[SELECT FROM: Personnel with account management responsibilities; system or network administrators; personnel with information security responsibilities]."
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "AC.L2-3.1.1_asm-test",
+                                "name": "assessment-method",
+                                "props": [
+                                    {
+                                        "name": "method",
+                                        "ns": "http://csrc.nist.gov/ns/rmf",
+                                        "value": "TEST"
+                                    },
+                                    {
+                                        "name": "label",
+                                        "value": "Test",
+                                        "class": "CMMCv2"
+                                    }
+                                ],
+                                "parts": [
+                                    {
+                                        "name": "assessment-objects",
+                                        "prose": "[SELECT FROM: Organizational processes for managing system accounts; mechanisms for implementing account management]."
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "back-matter": {
+            "resources": [
+                {
+                    "uuid": "7dbd6d9f-29d6-4d1d-9766-f2d77ff3c849",
+                    "title": "SP 800-171",
+                    "citation": {
+                        "text": "Ross RS, Pillitteri VY, Dempsey KL, Riddle M, Guissanie G (2020) Protecting Controlled Unclassified Information in Nonfederal Systems and Organizations. (National Institute of Standards and Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-171, Rev. 2."
+                    },
+                    "rlinks": [
+                        {
+                            "href": "https://doi.org/10.6028/NIST.SP.800-171r2"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About CMMC-Buddy — CMMC Compliance Assistant</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; min-height: 100vh; }
+  header { background: #1a1a2e; color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 20px; font-weight: 600; }
+  header .subtitle { font-size: 13px; color: #8888aa; }
+  header .nav-link { margin-left: auto; color: #8888aa; text-decoration: none; font-size: 14px; font-weight: 500; }
+  header .nav-link:hover { color: white; }
+  .amp-badge { background: #4CAF50; color: white; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+
+  main { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+  h2 { font-size: 28px; margin-bottom: 16px; color: #1a1a2e; }
+  h3 { font-size: 20px; margin: 32px 0 12px; color: #1a1a2e; }
+  p { line-height: 1.7; color: #333; margin-bottom: 16px; }
+  ul { margin: 16px 0 16px 24px; line-height: 1.8; }
+  li { margin-bottom: 8px; }
+  .highlight { background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #4CAF50; }
+  .highlight h4 { color: #2e7d32; margin-bottom: 8px; }
+  .highlight-blue { background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #1976d2; }
+  .highlight-blue h4 { color: #1565c0; margin-bottom: 8px; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 14px; }
+  .sources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 24px 0; }
+  .source-card { background: white; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .source-card h5 { color: #1a1a2e; margin-bottom: 4px; }
+  .source-card p { font-size: 13px; color: #666; margin: 0; }
+  .source-card .count { font-size: 11px; color: #4CAF50; font-weight: 600; }
+  .cta { background: #1a1a2e; color: white; padding: 24px; border-radius: 8px; text-align: center; margin-top: 40px; }
+  .cta a { color: #4CAF50; text-decoration: none; font-weight: 600; }
+  .cta a:hover { text-decoration: underline; }
+  .question-category { margin: 24px 0; }
+  .question-category h4 { color: #1a1a2e; font-size: 16px; margin-bottom: 12px; border-bottom: 2px solid #4CAF50; padding-bottom: 4px; display: inline-block; }
+  .question-category ul { margin-top: 8px; }
+  .question-category li { color: #444; }
+  .question-category li code { background: #e8f5e9; color: #2e7d32; }
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>CMMC-Buddy <span class="amp-badge">AMP</span></h1>
+      <div class="subtitle">CMMC Level 2 Compliance — NIST 800-171 · 800-53 · Assessment Guidance</div>
+    </div>
+    <a href="/cmmc/" class="nav-link">← Back to Chat</a>
+  </header>
+
+  <main>
+    <h2>Why CMMC-Buddy?</h2>
+    
+    <p>CMMC Level 2 certification requires demonstrating compliance with 110 security controls across 320 assessment objectives. The documentation is dense, the mapping between frameworks is complex, and knowing <em>what evidence assessors actually want</em> takes years of experience.</p>
+
+    <p><strong>CMMC-Buddy answers your CMMC questions instantly</strong> — with specific control text, framework mappings, and practical assessment guidance including the Microsoft Graph API calls you need to gather evidence.</p>
+
+    <div class="highlight-blue">
+      <h4>🔍 Assessment-Ready Guidance</h4>
+      <p>CMMC-Buddy doesn't just explain controls — it tells you <strong>exactly what assessors want to see</strong>, which Graph API calls to run, what manual documentation to prepare, and common gaps that trip up organizations. Built from real assessment experience.</p>
+    </div>
+
+    <div class="highlight">
+      <h4>🧠 Powered by AMP (Agent Memory Protocol)</h4>
+      <p>When CMMC-Buddy gets something wrong, you can correct it. Those corrections become <strong>permanent institutional knowledge</strong> that improves every future answer. The more you use it, the smarter it gets.</p>
+    </div>
+
+    <h3>What's Inside</h3>
+    <p>CMMC-Buddy is built on official NIST OSCAL data plus comprehensive assessment guidance:</p>
+
+    <div class="sources-grid">
+      <div class="source-card">
+        <h5>NIST SP 800-53 Rev 5</h5>
+        <p>Complete security control catalog with enhancements</p>
+        <span class="count">1,196 controls</span>
+      </div>
+      <div class="source-card">
+        <h5>NIST SP 800-171 Rev 3</h5>
+        <p>CUI security requirements with 800-53 mappings</p>
+        <span class="count">130 controls</span>
+      </div>
+      <div class="source-card">
+        <h5>NIST CSF 2.0</h5>
+        <p>Cybersecurity Framework — organize by function</p>
+        <span class="count">219 controls</span>
+      </div>
+      <div class="source-card">
+        <h5>FedRAMP HIGH Baseline</h5>
+        <p>Federal cloud security requirements</p>
+        <span class="count">410 controls</span>
+      </div>
+      <div class="source-card">
+        <h5>CMMC L2 Assessment Objectives</h5>
+        <p>All 320 objectives with Graph API mappings and assessor guidance</p>
+        <span class="count">320 objectives</span>
+      </div>
+      <div class="source-card">
+        <h5>Microsoft Graph API Mapping</h5>
+        <p>55 validated endpoints for automated evidence collection</p>
+        <span class="count">826 API references</span>
+      </div>
+    </div>
+
+    <h3>Example Questions</h3>
+    
+    <div class="question-category">
+      <h4>📋 Assessment & Evidence</h4>
+      <ul>
+        <li>"How do I assess CMMC objective <code>AC.L2-3.1.1-a</code>?"</li>
+        <li>"What Graph API calls do I need for access control assessment?"</li>
+        <li>"What evidence does an assessor want for <code>AC.L2-3.1.5</code> privileged accounts?"</li>
+        <li>"What are common gaps for session termination controls?"</li>
+        <li>"What manual documentation do I need for <code>AC.L2-3.1.12</code> remote access?"</li>
+      </ul>
+    </div>
+
+    <div class="question-category">
+      <h4>🔗 Control Mapping</h4>
+      <ul>
+        <li>"How does 800-171 control <code>3.1.1</code> map to 800-53?"</li>
+        <li>"What's the difference between <code>AC-2</code> and <code>AC-2(1)</code>?"</li>
+        <li>"Which 800-171 controls address multi-factor authentication?"</li>
+        <li>"What CSF functions cover incident response?"</li>
+      </ul>
+    </div>
+
+    <div class="question-category">
+      <h4>📖 Control Understanding</h4>
+      <ul>
+        <li>"What is the full text of control <code>3.5.3</code>?"</li>
+        <li>"Explain the account management requirements in 800-171"</li>
+        <li>"What are the configuration management controls?"</li>
+        <li>"What does 'least privilege' mean in CMMC context?"</li>
+      </ul>
+    </div>
+
+    <div class="question-category">
+      <h4>🏗️ Implementation</h4>
+      <ul>
+        <li>"How do I implement session lock in Microsoft 365?"</li>
+        <li>"What Conditional Access policies satisfy <code>AC.L2-3.1.12</code>?"</li>
+        <li>"What's the recommended approach for CUI enclave isolation?"</li>
+        <li>"How do I use Azure Virtual Desktop for CMMC scope reduction?"</li>
+      </ul>
+    </div>
+
+    <h3>How It Works</h3>
+    <ol style="margin: 16px 0 16px 24px; line-height: 1.8;">
+      <li><strong>Ask a question</strong> about CMMC controls, assessment, or implementation</li>
+      <li>CMMC-Buddy searches 2,275 indexed chunks using semantic + exact matching</li>
+      <li>AI synthesizes the answer with <strong>specific citations and Graph API guidance</strong></li>
+      <li>If something's wrong, click "Correct" and provide the fix</li>
+      <li>Future answers incorporate your corrections via AMP</li>
+    </ol>
+
+    <h3>For C3PAOs, OSCs & MSPs</h3>
+    <p>Whether you're conducting assessments, preparing for certification, or helping clients achieve compliance:</p>
+    <ul>
+      <li><strong>Assessment prep</strong> — know exactly what evidence to gather before the assessor arrives</li>
+      <li><strong>Graph API guidance</strong> — get the specific API calls for automated evidence collection</li>
+      <li><strong>Gap identification</strong> — learn common gaps that trip up organizations</li>
+      <li><strong>Framework navigation</strong> — instantly map between 800-171, 800-53, and CMMC</li>
+      <li><strong>Knowledge capture</strong> — corrections persist and improve answers for your whole team</li>
+    </ul>
+
+    <div class="cta">
+      <p>Ready to accelerate your CMMC compliance?</p>
+      <p style="margin-top: 12px;"><a href="/cmmc/">Start asking questions →</a></p>
+    </div>
+  </main>
+</body>
+</html>

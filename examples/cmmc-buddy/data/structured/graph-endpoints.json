@@ -1,0 +1,392 @@
+{
+  "source": "/home/whoop/GitHub/MSTRG/src/Assessment/Common/GraphWrapper.psm1",
+  "description": "Validated Microsoft Graph API endpoints extracted from MSTRG v1 GraphWrapper.psm1",
+  "endpoint_count": 55,
+  "endpoints": {
+    "/agreements": {
+      "wrapper_function": "Get-CMMCAgreements",
+      "endpoint": "/agreements",
+      "permissions": "Agreement.Read.All",
+      "category": "Agreements",
+      "synopsis": "List agreements"
+    },
+    "/applications": {
+      "wrapper_function": "Get-CMMCApplications",
+      "endpoint": "/applications",
+      "permissions": "Application.Read.All, Application.ReadWrite.All",
+      "category": "Applications",
+      "synopsis": "List or create applications"
+    },
+    "/applications/{id}": {
+      "wrapper_function": "Get-CMMCApplicationsById",
+      "endpoint": "/applications/{id}",
+      "permissions": "Application.Read.All, Application.ReadWrite.All",
+      "category": "Applications",
+      "synopsis": "Get, update or delete an application"
+    },
+    "/servicePrincipals": {
+      "wrapper_function": "Get-CMMCServicePrincipals",
+      "endpoint": "/servicePrincipals",
+      "permissions": "Application.Read.All, Application.ReadWrite.All",
+      "category": "Applications",
+      "synopsis": "List or create service principals"
+    },
+    "/servicePrincipals/{id}": {
+      "wrapper_function": "Get-CMMCServicePrincipalsById",
+      "endpoint": "/servicePrincipals/{id}",
+      "permissions": "Application.Read.All, Application.ReadWrite.All",
+      "category": "Applications",
+      "synopsis": "Get, update or delete a service principal"
+    },
+    "/servicePrincipals/{id}/appRoleAssignments": {
+      "wrapper_function": "Get-CMMCServicePrincipalsByIdappRoleAssignments",
+      "endpoint": "/servicePrincipals/{id}/appRoleAssignments",
+      "permissions": "Application.Read.All",
+      "category": "Applications",
+      "synopsis": "List app role assignments for a service principal"
+    },
+    "/auditLogs/directoryAudits": {
+      "wrapper_function": "Get-CMMCAuditLogDirectoryAudits",
+      "endpoint": "/auditLogs/directoryAudits",
+      "permissions": "AuditLog.Read.All",
+      "category": "Unknown",
+      "synopsis": "List directory audit logs"
+    },
+    "/auditLogs/provisioning": {
+      "wrapper_function": "Get-CMMCAuditLogsProvisioning",
+      "endpoint": "/auditLogs/provisioning",
+      "permissions": "AuditLog.Read.All",
+      "category": "AuditLogs",
+      "synopsis": "List provisioning logs"
+    },
+    "/auditLogs/signIns": {
+      "wrapper_function": "Get-CMMCAuditLogsSignIns",
+      "endpoint": "/auditLogs/signIns",
+      "permissions": "AuditLog.Read.All, Directory.Read.All",
+      "category": "AuditLogs",
+      "synopsis": "List sign-in logs"
+    },
+    "/deviceManagement/detectedApps": {
+      "wrapper_function": "Get-CMMCDeviceManagementDetectedApps",
+      "endpoint": "/deviceManagement/detectedApps",
+      "permissions": "DeviceManagementApps.Read.All",
+      "category": "DeviceManagement",
+      "synopsis": "List detected apps"
+    },
+    "/deviceManagement/deviceCompliancePolicies": {
+      "wrapper_function": "Get-CMMCDeviceManagementDeviceCompliancePolicies",
+      "endpoint": "/deviceManagement/deviceCompliancePolicies",
+      "permissions": "DeviceManagementConfiguration.Read.All",
+      "category": "DeviceManagement",
+      "synopsis": "List device compliance policies"
+    },
+    "/deviceManagement/deviceConfigurations": {
+      "wrapper_function": "Get-CMMCDeviceManagementDeviceConfigurations",
+      "endpoint": "/deviceManagement/deviceConfigurations",
+      "permissions": "DeviceManagementConfiguration.Read.All",
+      "category": "DeviceManagement",
+      "synopsis": "List device configurations"
+    },
+    "/deviceManagement/deviceEnrollmentConfigurations": {
+      "wrapper_function": "Get-CMMCDeviceManagementDeviceEnrollmentConfigurations",
+      "endpoint": "/deviceManagement/deviceEnrollmentConfigurations",
+      "permissions": "DeviceManagementConfiguration.Read.All",
+      "category": "DeviceManagement",
+      "synopsis": "List device enrollment configurations"
+    },
+    "/deviceManagement/managedDevices": {
+      "wrapper_function": "Get-CMMCDeviceManagementManagedDevices",
+      "endpoint": "/deviceManagement/managedDevices",
+      "permissions": "DeviceManagementManagedDevices.Read.All",
+      "category": "DeviceManagement",
+      "synopsis": "List managed devices"
+    },
+    "/devices": {
+      "wrapper_function": "Get-CMMCDevices",
+      "endpoint": "/devices",
+      "permissions": "Device.Read.All",
+      "category": "Devices",
+      "synopsis": "List devices"
+    },
+    "/devices/{id}": {
+      "wrapper_function": "Get-CMMCDevicesById",
+      "endpoint": "/devices/{id}",
+      "permissions": "Device.Read.All",
+      "category": "Devices",
+      "synopsis": "Get a specific device"
+    },
+    "/directoryRoles": {
+      "wrapper_function": "Get-CMMCDirectoryRoles",
+      "endpoint": "/directoryRoles",
+      "permissions": "Directory.Read.All, RoleManagement.Read.Directory",
+      "category": "Directory",
+      "synopsis": "List directory roles"
+    },
+    "/directoryRoles/{id}": {
+      "wrapper_function": "Get-CMMCDirectoryRolesById",
+      "endpoint": "/directoryRoles/{id}",
+      "permissions": "Directory.Read.All, RoleManagement.Read.Directory",
+      "category": "Directory",
+      "synopsis": "Get a specific directory role"
+    },
+    "/directoryRoles/{id}/members": {
+      "wrapper_function": "Get-CMMCDirectoryRolesByIdmembers",
+      "endpoint": "/directoryRoles/{id}/members",
+      "permissions": "Directory.Read.All, RoleManagement.Read.Directory",
+      "category": "Directory",
+      "synopsis": "List members of a directory role"
+    },
+    "/roleManagement/directory/roleAssignments": {
+      "wrapper_function": "Get-CMMCRoleManagementDirectoryRoleAssignments",
+      "endpoint": "/roleManagement/directory/roleAssignments",
+      "permissions": "RoleManagement.Read.Directory",
+      "category": "Directory",
+      "synopsis": "List role assignments"
+    },
+    "/roleManagement/directory/roleDefinitions": {
+      "wrapper_function": "Get-CMMCRoleManagementDirectoryRoleDefinitions",
+      "endpoint": "/roleManagement/directory/roleDefinitions",
+      "permissions": "RoleManagement.Read.Directory",
+      "category": "Directory",
+      "synopsis": "List role definitions"
+    },
+    "/groups": {
+      "wrapper_function": "Get-CMMCGroups",
+      "endpoint": "/groups",
+      "permissions": "Group.Read.All, Group.ReadWrite.All",
+      "category": "Groups",
+      "synopsis": "List or create groups"
+    },
+    "/groups/{id}": {
+      "wrapper_function": "Get-CMMCGroupsById",
+      "endpoint": "/groups/{id}",
+      "permissions": "Group.Read.All, Group.ReadWrite.All",
+      "category": "Groups",
+      "synopsis": "Get, update or delete a specific group"
+    },
+    "/groups/{id}/members": {
+      "wrapper_function": "Get-CMMCGroupMembers",
+      "endpoint": "/groups/{id}/members",
+      "permissions": "GroupMember.Read.All",
+      "category": "Unknown",
+      "synopsis": "List group members"
+    },
+    "/identityGovernance/accessReviews/definitions": {
+      "wrapper_function": "Get-CMMCIdentityGovernanceAccessReviewsDefinitions",
+      "endpoint": "/identityGovernance/accessReviews/definitions",
+      "permissions": "AccessReview.Read.All",
+      "category": "IdentityGovernance",
+      "synopsis": "List access review definitions"
+    },
+    "/identityGovernance/entitlementManagement/catalogs": {
+      "wrapper_function": "Get-CMMCIdentityGovernanceEntitlementManagementCatalogs",
+      "endpoint": "/identityGovernance/entitlementManagement/catalogs",
+      "permissions": "EntitlementManagement.Read.All",
+      "category": "IdentityGovernance",
+      "synopsis": "List access package catalogs"
+    },
+    "/oauth2PermissionGrants": {
+      "wrapper_function": "Get-CMMCOAuth2PermissionGrants",
+      "endpoint": "/oauth2PermissionGrants",
+      "permissions": "DelegatedPermissionGrant.ReadWrite.All",
+      "category": "OAuth2",
+      "synopsis": "List OAuth2 permission grants"
+    },
+    "/directory/administrativeUnits": {
+      "wrapper_function": "Get-CMMCDirectoryAdministrativeUnits",
+      "endpoint": "/directory/administrativeUnits",
+      "permissions": "AdministrativeUnit.Read.All",
+      "category": "Organization",
+      "synopsis": "List administrative units"
+    },
+    "/directory/deletedItems/{type}": {
+      "wrapper_function": "Get-CMMCDirectoryDeletedItems",
+      "endpoint": "/directory/deletedItems/{type}",
+      "permissions": "Directory.Read.All",
+      "category": "Directory",
+      "synopsis": "Returns deleted directory items with required OData cast type"
+    },
+    "/domains": {
+      "wrapper_function": "Get-CMMCDomains",
+      "endpoint": "/domains",
+      "permissions": "Domain.Read.All",
+      "category": "Organization",
+      "synopsis": "List domains"
+    },
+    "/organization": {
+      "wrapper_function": "Get-CMMCOrganization",
+      "endpoint": "/organization",
+      "permissions": "Organization.Read.All",
+      "category": "Organization",
+      "synopsis": "Get organization details"
+    },
+    "/subscribedSkus": {
+      "wrapper_function": "Get-CMMCSubscribedSkus",
+      "endpoint": "/subscribedSkus",
+      "permissions": "Organization.Read.All",
+      "category": "Organization",
+      "synopsis": "List subscribed SKUs"
+    },
+    "/identity/conditionalAccess/namedLocations": {
+      "wrapper_function": "Get-CMMCIdentityConditionalAccessNamedLocations",
+      "endpoint": "/identity/conditionalAccess/namedLocations",
+      "permissions": "ConditionalAccess.Read.All",
+      "category": "Policies",
+      "synopsis": "List named locations"
+    },
+    "/identity/conditionalAccess/policies": {
+      "wrapper_function": "Get-CMMCIdentityConditionalAccessPolicies",
+      "endpoint": "/identity/conditionalAccess/policies",
+      "permissions": "ConditionalAccess.Read.All",
+      "category": "Policies",
+      "synopsis": "List conditional access policies"
+    },
+    "/policies/authenticationMethodsPolicy": {
+      "wrapper_function": "Get-CMMCPoliciesAuthenticationMethodsPolicy",
+      "endpoint": "/policies/authenticationMethodsPolicy",
+      "permissions": "Policy.Read.All",
+      "category": "Policies",
+      "synopsis": "Get authentication methods policy"
+    },
+    "/policies/conditionalAccessPolicies": {
+      "wrapper_function": "Get-CMMCPoliciesConditionalAccessPolicies",
+      "endpoint": "/policies/conditionalAccessPolicies",
+      "permissions": "Policy.Read.All, ConditionalAccess.Read.All",
+      "category": "Policies",
+      "synopsis": "List conditional access policies"
+    },
+    "/reports/authenticationMethods/usersRegisteredByMethod": {
+      "wrapper_function": "Get-CMMCReportsAuthenticationMethodsUsersRegisteredByMethod",
+      "endpoint": "/reports/authenticationMethods/usersRegisteredByMethod",
+      "permissions": "Reports.Read.All",
+      "category": "Reports",
+      "synopsis": "Get users registered by authentication method"
+    },
+    "/reports/security/getAttackSimulationRepeatOffenders": {
+      "wrapper_function": "Get-CMMCReportsSecurityGetAttackSimulationRepeatOffenders",
+      "endpoint": "/reports/security/getAttackSimulationRepeatOffenders",
+      "permissions": "Reports.Read.All",
+      "category": "Reports",
+      "synopsis": "Get attack simulation repeat offenders"
+    },
+    "/reports/security/getAttackSimulationTrainingUserCoverage": {
+      "wrapper_function": "Get-CMMCReportsSecurityGetAttackSimulationTrainingUserCoverage",
+      "endpoint": "/reports/security/getAttackSimulationTrainingUserCoverage",
+      "permissions": "Reports.Read.All",
+      "category": "Reports",
+      "synopsis": "Get attack simulation training user coverage"
+    },
+    "/security/alerts": {
+      "wrapper_function": "Get-CMMCSecurityAlerts",
+      "endpoint": "/security/alerts",
+      "permissions": "SecurityEvents.Read.All",
+      "category": "Security",
+      "synopsis": "List security alerts"
+    },
+    "/security/alerts/{id}": {
+      "wrapper_function": "Get-CMMCSecurityalertsById",
+      "endpoint": "/security/alerts/{id}",
+      "permissions": "SecurityEvents.Read.All, SecurityEvents.ReadWrite.All",
+      "category": "Security",
+      "synopsis": "Get or update a security alert"
+    },
+    "/security/incidents": {
+      "wrapper_function": "Get-CMMCSecurityIncidents",
+      "endpoint": "/security/incidents",
+      "permissions": "SecurityIncident.Read.All",
+      "category": "Security",
+      "synopsis": "List security incidents"
+    },
+    "/security/secureScores": {
+      "wrapper_function": "Get-CMMCSecuritySecureScores",
+      "endpoint": "/security/secureScores",
+      "permissions": "SecurityEvents.Read.All",
+      "category": "Security",
+      "synopsis": "List secure scores"
+    },
+    "/security/threatIntelligence/vulnerabilities": {
+      "wrapper_function": "Get-CMMCThreatIntelligenceVulnerabilities",
+      "endpoint": "/security/threatIntelligence/vulnerabilities",
+      "permissions": "ThreatIntelligence.Read.All",
+      "category": "Security",
+      "synopsis": "Get threat intelligence vulnerability information"
+    },
+    "/users": {
+      "wrapper_function": "Get-CMMCUsers",
+      "endpoint": "/users",
+      "permissions": "User.Read.All, User.ReadWrite.All",
+      "category": "Users",
+      "synopsis": "List or create users"
+    },
+    "/users/{id}": {
+      "wrapper_function": "Get-CMMCUsersById",
+      "endpoint": "/users/{id}",
+      "permissions": "User.Read.All, User.ReadWrite.All",
+      "category": "Users",
+      "synopsis": "Get, update or delete a specific user"
+    },
+    "/policies/authorizationPolicy": {
+      "wrapper_function": "Get-CMMCDirectoryExternalIdentitiesPolicies",
+      "endpoint": "/policies/authorizationPolicy",
+      "permissions": "Policy.Read.All",
+      "category": "Unknown",
+      "synopsis": "Get authorization policy (includes external identities settings)"
+    },
+    "/policies/crossTenantAccessPolicy": {
+      "wrapper_function": "Get-CMMCPoliciesCrossTenantAccessPolicy",
+      "endpoint": "/policies/crossTenantAccessPolicy",
+      "permissions": "Policy.Read.All",
+      "category": "Unknown",
+      "synopsis": "Get cross-tenant access policy"
+    },
+    "/security/dataSecurityAndGovernance/sensitivityLabels": {
+      "wrapper_function": "Get-CMMCInformationProtectionPolicySensitivityLabels",
+      "endpoint": "/security/dataSecurityAndGovernance/sensitivityLabels",
+      "permissions": "InformationProtectionPolicy.Read.All",
+      "category": "Unknown",
+      "synopsis": "List sensitivity labels for tenant"
+    },
+    "/admin/sharepoint/settings": {
+      "wrapper_function": "Get-CMMCSharePointSettings",
+      "endpoint": "/admin/sharepoint/settings",
+      "permissions": "SharePointTenantSettings.Read.All",
+      "category": "Unknown",
+      "synopsis": "Get SharePoint tenant settings"
+    },
+    "/identityGovernance/termsOfUse/agreements": {
+      "wrapper_function": "Get-CMMCIdentityGovernanceTermsOfUse",
+      "endpoint": "/identityGovernance/termsOfUse/agreements",
+      "permissions": "Agreement.Read.All",
+      "category": "Unknown",
+      "synopsis": "List terms of use agreements"
+    },
+    "/organization/{id}/branding": {
+      "wrapper_function": "Get-CMMCOrganizationBranding",
+      "endpoint": "/organization/{id}/branding",
+      "permissions": "Organization.Read.All",
+      "category": "Unknown",
+      "synopsis": "Get organizational branding"
+    },
+    "/identityGovernance/entitlementManagement/connectedOrganizations": {
+      "wrapper_function": "Get-CMMCIdentityGovernanceEntitlementManagementConnectedOrganizations",
+      "endpoint": "/identityGovernance/entitlementManagement/connectedOrganizations",
+      "permissions": "EntitlementManagement.Read.All",
+      "category": "Unknown",
+      "synopsis": "List connected organizations"
+    },
+    "/identityProtection/riskDetections": {
+      "wrapper_function": "Get-CMMCIdentityProtectionRiskDetections",
+      "endpoint": "/identityProtection/riskDetections",
+      "permissions": "IdentityRiskEvent.Read.All",
+      "category": "Identity",
+      "synopsis": "List identity protection risk detections"
+    },
+    "/security/attackSimulation/simulations": {
+      "wrapper_function": "Get-CMMCSecurityAttackSimulationSimulations",
+      "endpoint": "/security/attackSimulation/simulations",
+      "permissions": "AttackSimulation.Read.All",
+      "category": "Security",
+      "synopsis": "List attack simulation campaigns"
+    }
+  }
+}
