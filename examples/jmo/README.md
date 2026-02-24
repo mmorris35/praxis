@@ -1,51 +1,81 @@
-# JMO — Corporate & Investor Compliance Assistant
+# J-Mo — Mortgage Underwriting Compliance Assistant
 
-JMO (Just My Opinion) helps organizations navigate corporate governance, investor requirements, and proprietary compliance guidelines.
+J-Mo helps mortgage underwriters navigate lending guidelines, agency requirements, and compliance rules.
 
-## Status: Foundation Ready, Expert Layer Needed
+## Status: Needs Foundation Data
 
-### Current State
-- ✅ Core Praxis architecture working
-- ✅ AMP corrections enabled
-- ⏳ **Layer 1 (Foundation)**: Needs corporate/investor guideline documents
-- ⏳ **Layer 2 (Expert Translation)**: Needs "what investors actually want" mapping
+### Layer 1 (Foundation) — Data Needed
+- **Fannie Mae Selling Guide**
+- **Freddie Mac Seller/Servicer Guide**
+- **FHA Single Family Housing Policy Handbook (HUD 4000.1)**
+- **VA Lender's Handbook**
+- **USDA Rural Development Guidelines**
+- **TRID/TILA-RESPA requirements**
+- **State-specific lending regulations**
+- **Investor overlays** (org-specific)
 
-### Data Needed (Layer 1)
-- Corporate governance frameworks
-- Investor due diligence checklists
-- Board reporting requirements
-- Proprietary compliance guidelines (org-specific)
-- SEC/regulatory disclosure requirements
-- ESG reporting standards
+### Layer 2 (Expert Translation) — Needed
+- What do underwriters actually check on each loan type?
+- Common file deficiencies that cause suspensions
+- Condition clearing requirements
+- AUS findings interpretation (DU/LP)
+- Income calculation methods by employment type
+- Asset documentation requirements
+- Credit exception guidelines
+- Compensating factors that work
 
-### Expert Translation Needed (Layer 2)
-- What do investors actually look for during due diligence?
-- What are common governance gaps that kill deals?
-- How do you prepare for board presentations?
-- What evidence satisfies investor requirements?
-- Red flags that sophisticated investors catch
+### Layer 3 (Corrections) — Ready
+- AMP/Nellie integration enabled
+- Corrections compound with real underwriting Q&A
+
+## Example Queries (Once Built)
+
+### Guideline Lookup
+- "What are Fannie Mae's DTI limits for a conforming loan?"
+- "What's the minimum credit score for FHA?"
+- "Gift fund documentation requirements for conventional?"
+
+### Underwriting Scenarios
+- "Self-employed borrower with 1 year tax returns — options?"
+- "How do I calculate rental income from a departing residence?"
+- "Non-occupant co-borrower on FHA — allowed?"
+
+### Condition Clearing
+- "What clears a large deposit condition?"
+- "Verbal VOE requirements for closing?"
+- "How to document gap in employment?"
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  LAYER 3: Corrections (AMP)              ✅ READY       │
-│  └─ Self-improving via real-world use                   │
+│  └─ Real underwriter Q&A improves answers               │
 ├─────────────────────────────────────────────────────────┤
 │  LAYER 2: Expert Translation             ⏳ NEEDED      │
-│  └─ "What investors actually want" mappings             │
-│     - Due diligence expectations                        │
-│     - Board presentation requirements                   │
-│     - Common gaps that kill deals                       │
+│  └─ What underwriters actually check                    │
+│     - Common suspension reasons                         │
+│     - Condition clearing patterns                       │
+│     - AUS interpretation                                │
 ├─────────────────────────────────────────────────────────┤
 │  LAYER 1: Foundation Data                ⏳ NEEDED      │
-│  └─ Corporate governance frameworks                     │
-│     - Investor guidelines                               │
-│     - Proprietary org-specific policies                 │
+│  └─ Agency guidelines (FNMA, FHLMC, FHA, VA)            │
+│     - Investor overlays                                 │
+│     - State regulations                                 │
 └─────────────────────────────────────────────────────────┘
 ```
 
-## Running JMO
+## Data Sources to Acquire
+
+| Source | Format | Notes |
+|--------|--------|-------|
+| Fannie Mae Selling Guide | HTML/PDF | AllRegs or direct |
+| Freddie Mac Guide | HTML/PDF | AllRegs or direct |
+| HUD 4000.1 | PDF | hudclips.org |
+| VA Lender's Handbook | PDF | VA.gov |
+| USDA Guidelines | PDF | USDA RD |
+
+## Running J-Mo
 
 ```bash
 cd examples/jmo
@@ -53,39 +83,21 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r ../../requirements.txt
 
-# Configure
+# Add guideline data to data/structured/
+# Create ingest script for mortgage guidelines
+
 export ANTHROPIC_API_KEY="your-key"
-
-# Add your foundation data to data/structured/
-# Then create an ingest script for your data format
-
-# Run
 uvicorn core.gateway.main:app --port 8081
 ```
 
-## Comparison with CMMC-Buddy
+## Why This Matters
 
-| Aspect | CMMC-Buddy | JMO |
-|--------|------------|-----|
-| Domain | CMMC/NIST compliance | Corporate/investor compliance |
-| Layer 1 | OSCAL frameworks (public) | Corporate guidelines (often proprietary) |
-| Layer 2 | Graph API mappings (built) | Investor expectations (needed) |
-| Layer 3 | AMP corrections | AMP corrections |
-| Status | Production-ready | Foundation needed |
+Mortgage underwriting has the same problem as CMMC:
+- **Dense documentation** — thousands of pages across multiple agencies
+- **Expert knowledge required** — guidelines don't tell you what actually works
+- **Edge cases everywhere** — real loans don't match textbook scenarios
 
-## Contributing Layer 2
-
-If you have expertise in:
-- Investor relations
-- Corporate governance
-- Due diligence processes
-- Board operations
-
-...the expert translation layer needs your knowledge. The pattern is the same as CMMC-Buddy:
-1. What does the audience (investors/board) actually want?
-2. What specific evidence satisfies them?
-3. What are common gaps that cause problems?
-4. What are the insider tips from experience?
+The Praxis pattern fits perfectly.
 
 ## License
 

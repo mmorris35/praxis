@@ -51,8 +51,8 @@ The more the system is used, the smarter it gets.
 
 ## Examples
 
-### JMO (Corporate & Investor Compliance)
-Corporate governance and investor requirements assistant. Foundation ready, needs Layer 2 expert translation (what investors actually want, due diligence expectations, common deal-killers).
+### J-Mo (Mortgage Underwriting Compliance)
+Mortgage underwriting assistant for agency guidelines (Fannie, Freddie, FHA, VA). Needs Layer 1 foundation data (selling guides, HUD 4000.1) and Layer 2 expert translation (what underwriters actually check, common suspension reasons, condition clearing).
 
 See [examples/jmo](./examples/jmo/)
 
