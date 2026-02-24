@@ -20,7 +20,7 @@ AI gateway with AMP-powered institutional memory.
 │  4. Prompt Assembly (user query + AMP + RAG)         │
 │  5. LLM Route (Anthropic/OpenAI/Ollama)              │
 │  6. Quality Check (grounding score)                  │
-│  7. AMP Learn (checkpoint update, correction capture)│
+│  7. AMP Learn (checkpoint update, refinement capture)│
 │  8. Trace (OpenTelemetry spans + audit log)          │
 │                                                      │
 │  No sanitization layer needed — zero PII in this     │
@@ -57,7 +57,7 @@ Chunk boundaries should respect this structure:
 - [ ] AMP Recall layer: query Nellie for lessons relevant to the query
 - [ ] AMP Learn layer: 
   - Auto-checkpoint conversation state
-  - Capture corrections ("actually, the limit is X not Y")
+  - Capture refinements ("actually, the limit is X not Y")
   - Record common confusion points as lessons
 - [ ] Agent scoping: one shared agent for the team to start
 
@@ -145,7 +145,7 @@ projects/amp-gateway/
 4. Ask: "What about for VA?"
    → Answer noting VA has no minimum, with Pamphlet 26-7 citation
 5. Say: "Actually, for FHA, there's a distinction between 580+ for 3.5% down and 500-579 for 10% down"
-   → AMP captures the correction as a lesson
+   → AMP captures the refinement as a lesson
 6. Ask the same FHA credit score question again
    → Now includes the nuanced answer (AMP lesson recalled)
 7. Show the audit dashboard: every query traced, timing visible, lessons accumulating

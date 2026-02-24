@@ -10,7 +10,7 @@ Every market below shares the same structure:
 2. **A senior person** who knows where to find answers
 3. **Junior people** who keep asking instead of looking
 4. **The senior person's time** is expensive and their patience is finite
-5. **Corrections compound** — AMP means the system gets smarter every time someone teaches it
+5. **Refinements compound** — AMP means the system gets smarter every time someone teaches it
 
 ---
 
@@ -133,10 +133,10 @@ Every market below shares the same structure:
 
 RAG chatbots are commodity. Everyone can chunk PDFs and point an LLM at them.
 
-**AMP is the moat.** The correction loop means:
+**AMP is the moat.** The refinement loop means:
 - Day 1: Generic RAG, ~60% accuracy
-- Week 1: Senior expert teaches it 50 corrections, ~85% accuracy
-- Month 1: 200+ corrections, handles edge cases, knows institutional interpretations
+- Week 1: Senior expert teaches it 50 refinements, ~85% accuracy
+- Month 1: 200+ refinements, handles edge cases, knows institutional interpretations
 - Month 6: It basically *is* that senior expert's brain, available 24/7
 
 You can't replicate 6 months of accumulated institutional knowledge by re-chunking PDFs. That's the lock-in. That's the product.
@@ -146,7 +146,7 @@ You can't replicate 6 months of accumulated institutional knowledge by re-chunki
 - **Per-seat SaaS:** $50-200/user/month (depending on industry margin)
 - **Enterprise:** $5K-50K/month per organization
 - **Usage-based:** Per-question pricing for high-value verticals (legal, pharma)
-- **Free tier → paid corrections:** Let anyone RAG their docs for free. Charge for AMP (the learning layer). Free gets you 60% accuracy. Paid gets you 95%.
+- **Free tier → paid refinements:** Let anyone RAG their docs for free. Charge for AMP (the learning layer). Free gets you 60% accuracy. Paid gets you 95%.
 
 ---
 

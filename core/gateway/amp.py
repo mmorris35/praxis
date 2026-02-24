@@ -32,17 +32,17 @@ def recall(question: str, top_k: int = 5) -> list[dict]:
     return []
 
 
-def learn(question: str, correction: str, original_answer: str = "", tags: list[str] = None) -> Optional[str]:
-    """Post-inference: store a correction as an AMP lesson for CMMC-Buddy."""
-    content = f"Q: {question}\n\nCorrection: {correction}"
+def learn(question: str, refinement: str, original_answer: str = "", tags: list[str] = None) -> Optional[str]:
+    """Post-inference: store a refinement as an AMP lesson for CMMC-Buddy."""
+    content = f"Q: {question}\n\nRefinement: {refinement}"
     if original_answer:
         content += f"\n\nOriginal (wrong) answer: {original_answer}"
 
     if tags is None:
-        tags = ["correction", "cmmc", "800-171"]
+        tags = ["refinement", "cmmc", "800-171"]
 
     result = _invoke("add_lesson", {
-        "title": f"CMMC correction: {question[:50]}...",
+        "title": f"CMMC refinement: {question[:50]}...",
         "content": content,
         "tags": tags,
         "severity": "info",
@@ -57,7 +57,7 @@ def format_lessons_for_prompt(lessons: list[dict]) -> str:
     if not lessons:
         return ""
     
-    lines = ["## Institutional Knowledge (from previous corrections)\n"]
+    lines = ["## Institutional Knowledge (from previous refinements)\n"]
     for i, lesson in enumerate(lessons, 1):
         content = lesson.get("content", "")
         lines.append(f"{i}. {content}\n")

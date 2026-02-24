@@ -37,7 +37,7 @@ app = FastAPI(title="JMO — AMP Gateway", docs_url=None, redoc_url=None, openap
 _rate_limits: dict[str, list[float]] = defaultdict(list)
 RATE_WINDOW = 60  # seconds
 RATE_CHAT = int(os.environ.get("JMO_RATE_CHAT", "15"))       # chat requests/min
-RATE_CORRECT = int(os.environ.get("JMO_RATE_CORRECT", "5"))  # corrections/min
+RATE_REFINE = int(os.environ.get("JMO_RATE_REFINE", "5"))  # refinements/min
 RATE_GLOBAL = int(os.environ.get("JMO_RATE_GLOBAL", "5"))    # any endpoint/min for banned IPs
 
 # Auto-ban: IPs that hit honeypot paths or too many 404s
@@ -103,8 +103,8 @@ HONEYPOT_PATHS = {
     '/etc/passwd', '/proc/self', '/.well-known/openid',
 }
 
-# 4. Correction auth
-CORRECTION_KEY = os.environ.get("CMMC_CORRECTION_KEY", "")
+# 4. Refinement auth
+EXPERT_KEY = os.environ.get("CMMC_EXPERT_KEY", "")
 
 # 5. Allowed paths (whitelist)
 ALLOWED_PATHS = {'/', '/about', '/robots.txt', '/api/health', '/api/chat', '/api/correct', '/v1/chat/completions', '/favicon.ico'}
@@ -170,9 +170,9 @@ class ChatRequest(BaseModel):
     message: str
     session_id: str = ""
 
-class CorrectionRequest(BaseModel):
+class RefinementRequest(BaseModel):
     question: str
-    correction: str
+    refinement: str
     original_answer: str = ""
     tags: list[str] = []
     key: str = ""
@@ -248,35 +248,35 @@ async def api_chat(req: ChatRequest, request: Request):
 
 
 @app.post("/api/correct")
-async def api_correct(req: CorrectionRequest, request: Request):
-    """Post-inference: teach the system a correction via AMP."""
+async def api_refine(req: RefinementRequest, request: Request):
+    """Post-inference: teach the system a refinement via AMP."""
     client_ip = request.client.host if request.client else "unknown"
 
-    # Require correction key
-    if CORRECTION_KEY and req.key != CORRECTION_KEY:
-        security_log.warning(f"BAD_CORRECTION_KEY ip={client_ip}")
+    # Require refinement key
+    if EXPERT_KEY and req.key != EXPERT_KEY:
+        security_log.warning(f"BAD_EXPERT_KEY ip={client_ip}")
         return JSONResponse(status_code=403, content={
-            "error": "Correction key required. Only authorized experts can teach JMO."
+            "error": "Refinement key required. Only authorized experts can teach JMO."
         })
 
-    # Rate limit corrections strictly
-    if not _check_rate_limit(client_ip, "correct", RATE_CORRECT):
-        return JSONResponse(status_code=429, content={"error": "Too many corrections. Slow down."})
+    # Rate limit refinements strictly
+    if not _check_rate_limit(client_ip, "correct", RATE_REFINE):
+        return JSONResponse(status_code=429, content={"error": "Too many refinements. Slow down."})
 
     # Injection check
-    if _check_injection(req.correction) or _check_injection(req.question):
+    if _check_injection(req.refinement) or _check_injection(req.question):
         security_log.warning(f"INJECTION_IN_CORRECTION ip={client_ip}")
-        return JSONResponse(status_code=400, content={"error": "Invalid correction content."})
+        return JSONResponse(status_code=400, content={"error": "Invalid refinement content."})
 
     # Length checks
-    if len(req.correction) > 5000 or len(req.question) > 2000:
+    if len(req.refinement) > 5000 or len(req.question) > 2000:
         return JSONResponse(status_code=400, content={"error": "Content too long."})
 
     try:
-        tags = req.tags if req.tags else ["correction", "cmmc"]
+        tags = req.tags if req.tags else ["refinement", "cmmc"]
         lesson_id = learn(
             question=req.question,
-            correction=req.correction,
+            refinement=req.refinement,
             original_answer=req.original_answer,
             tags=tags,
         )
@@ -287,7 +287,7 @@ async def api_correct(req: CorrectionRequest, request: Request):
             return JSONResponse(status_code=500, content={"error": "Failed to save lesson"})
     except Exception as e:
         traceback.print_exc()
-        return JSONResponse(status_code=500, content={"error": "Failed to save correction."})
+        return JSONResponse(status_code=500, content={"error": "Failed to save refinement."})
 
 
 @app.post("/v1/chat/completions")

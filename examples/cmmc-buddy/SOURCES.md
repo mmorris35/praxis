@@ -98,4 +98,4 @@ An underwriting manager can ask:
 - "When can I use a 1099 instead of tax returns for income verification?"
 
 And get answers with **exact guideline citations** — section numbers, page references.
-With AMP, corrections and clarifications accumulate over time.
+With AMP, refinements and clarifications accumulate over time.

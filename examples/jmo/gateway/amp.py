@@ -44,15 +44,15 @@ def recall(question: str, top_k: int = 5) -> list[dict]:
     return []
 
 
-def learn(question: str, correction: str, original_answer: str = "", tags: list[str] = None) -> Optional[str]:
-    """Post-inference: store a correction as an AMP lesson.
+def learn(question: str, refinement: str, original_answer: str = "", tags: list[str] = None) -> Optional[str]:
+    """Post-inference: store a refinement as an AMP lesson.
     Returns the lesson ID if successful."""
-    content = f"Q: {question}\n\nCorrection: {correction}"
+    content = f"Q: {question}\n\nRefinement: {refinement}"
     if original_answer:
         content += f"\n\nOriginal (wrong) answer: {original_answer}"
 
     if tags is None:
-        tags = ["correction", "underwriting"]
+        tags = ["refinement", "underwriting"]
 
     result = _invoke("add_lesson", {
         "agent": AGENT_NAME,
@@ -68,9 +68,9 @@ def format_lessons_for_prompt(lessons: list[dict]) -> str:
     """Format AMP lessons into context for the LLM prompt."""
     if not lessons:
         return ""
-    parts = ["## Institutional Knowledge (from prior corrections)\n"
+    parts = ["## Institutional Knowledge (from prior refinements)\n"
              "IMPORTANT: If a lesson below directly answers the question, USE IT. "
-             "These are verified corrections from senior underwriters.\n"]
+             "These are verified refinements from senior underwriters.\n"]
     for i, lesson in enumerate(lessons, 1):
         # Handle Nellie's {distance, record: {content, ...}} format
         if "record" in lesson:

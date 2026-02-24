@@ -2,7 +2,7 @@
 
 **A system for creating expert systems.**
 
-Praxis turns dense documentation into actionable expertise — not a chatbot that quotes manuals, but an expert that knows what actually works and learns from every correction.
+Praxis turns dense documentation into actionable expertise — not a chatbot that quotes manuals, but an expert that knows what actually works and learns from every refinement.
 
 ## The Pattern
 
@@ -10,7 +10,7 @@ Every complex field has the same problem: mountains of documentation that takes 
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  LAYER 3: Corrections (AMP/Nellie)                      │
+│  LAYER 3: Refinements (AMP/Nellie)                      │
 │  └─ Self-improving via real-world use                   │
 │     The flywheel that compounds value over time         │
 ├─────────────────────────────────────────────────────────┤
@@ -36,8 +36,8 @@ The hard part. Maps theoretical requirements to practical implementation:
 
 This layer is the moat — it takes domain expertise and years of real-world experience to build.
 
-### Layer 3: Corrections
-AMP (Agent Memory Protocol) integration via Nellie. When the system gets something wrong, experts can correct it. Those corrections persist and improve every future response.
+### Layer 3: Refinement
+AMP (Agent Memory Protocol) integration via Nellie. When the system gets something wrong, experts can refine it. Those refinements persist and improve every future response.
 
 The more the system is used, the smarter it gets.
 
@@ -94,7 +94,7 @@ uvicorn gateway.main:app --host 0.0.0.0 --port 8081
 The Praxis pattern works for any field with:
 - Dense official documentation
 - Expert knowledge required for practical application
-- Real-world edge cases that improve with corrections
+- Real-world edge cases that improve with refinements
 
 Examples:
 - **Compliance**: CMMC, HIPAA, SOC 2, ISO 27001, PCI-DSS

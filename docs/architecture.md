@@ -5,7 +5,7 @@
 Praxis is a framework for building domain-specific expert systems that combine:
 1. Structured knowledge (RAG)
 2. Expert translation (the "how to actually do it")
-3. Self-improvement via corrections (AMP)
+3. Self-improvement via refinements (AMP)
 
 ## The Three Layers
 
@@ -45,22 +45,22 @@ Praxis is a framework for building domain-specific expert systems that combine:
 
 **This layer is the moat** — it takes years of domain expertise to build correctly.
 
-### Layer 3: Corrections (AMP)
+### Layer 3: Refinement (AMP)
 
 **Purpose**: Continuous improvement via expert feedback.
 
 **How it works**:
 1. User asks a question
 2. System retrieves context and generates response
-3. If response is wrong, expert submits correction
-4. Correction stored in Nellie with semantic indexing
-5. Future queries recall relevant corrections as "institutional knowledge"
-6. Corrections take priority over raw documentation
+3. If response is wrong, expert submits refinement
+4. Refinement stored in Nellie with semantic indexing
+5. Future queries recall relevant refinements as "institutional knowledge"
+6. Refinements take priority over raw documentation
 
 **Why it matters**:
 - Documentation has gaps, ambiguities, edge cases
 - Real-world usage reveals what matters
-- Corrections compound — each one improves the system
+- Refinements compound — each one improves the system
 - Creates a flywheel that competitors can't easily replicate
 
 ## Technical Components
@@ -93,9 +93,9 @@ Query → Hybrid Search → Context Assembly → LLM → Response
 ### AMP (Agent Memory Protocol)
 
 Integration with Nellie-RS for:
-- `recall(query)` — find relevant corrections before inference
-- `learn(question, correction, original)` — store new corrections
-- Semantic search over corrections
+- `recall(query)` — find relevant refinements before inference
+- `learn(question, refinement, original)` — store new refinements
+- Semantic search over refinements
 - Tags and severity for prioritization
 
 ### LLM Layer
@@ -103,7 +103,7 @@ Integration with Nellie-RS for:
 Configurable backend (Claude, GPT, local models).
 
 System prompt instructs:
-- Prioritize institutional knowledge (corrections)
+- Prioritize institutional knowledge (refinements)
 - Cite sources properly
 - Format technical output (code blocks, commands)
 - Admit when context doesn't contain the answer
@@ -118,7 +118,7 @@ System prompt instructs:
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    AMP PRE-RECALL                           │
-│              (Check for relevant corrections)               │
+│              (Check for relevant refinements)               │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
@@ -130,7 +130,7 @@ System prompt instructs:
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   CONTEXT ASSEMBLY                          │
-│        (Corrections + Framework chunks + Expert layer)      │
+│        (Refinements + Framework chunks + Expert layer)      │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
@@ -142,17 +142,17 @@ System prompt instructs:
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                       RESPONSE                              │
-│          (With sources, ready for correction)               │
+│          (With sources, ready for refinement)               │
 └─────────────────────────────────────────────────────────────┘
                             │
               ┌─────────────┴─────────────┐
-              │    User submits correction │
+              │    User submits refinement │
               └─────────────┬─────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                      AMP LEARN                              │
-│            (Store correction for future recall)             │
+│            (Store refinement for future recall)             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -163,18 +163,18 @@ System prompt instructs:
 3. **Build expert layer** — This is the hard part. Interview experts, document real procedures, map theory to practice.
 4. **Configure Praxis** — Set up ingestion, embeddings, LLM
 5. **Ingest and test** — Load data, verify retrieval quality
-6. **Deploy with corrections enabled** — Let real usage improve the system
-7. **Iterate** — Review corrections, update expert layer, re-ingest
+6. **Deploy with refinements enabled** — Let real usage improve the system
+7. **Iterate** — Review refinements, update expert layer, re-ingest
 
 ## Deployment Models
 
 ### SaaS
-- Multi-tenant, shared corrections pool
+- Multi-tenant, shared refinements pool
 - Lower friction, recurring revenue
-- Corrections benefit all users (network effect)
+- Refinements benefit all users (network effect)
 
 ### On-Premises / Private
-- Single-tenant, private corrections
+- Single-tenant, private refinements
 - Higher price point
 - Organizations keep their refinements private
 - Appeals to security-conscious buyers
@@ -182,4 +182,4 @@ System prompt instructs:
 ### Hybrid
 - Free tier: Foundation only (Layer 1)
 - Pro tier: Foundation + Expert (Layers 1-2)
-- Enterprise: Private deployment, keep corrections (All layers, isolated)
+- Enterprise: Private deployment, keep refinements (All layers, isolated)

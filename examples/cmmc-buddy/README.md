@@ -30,8 +30,8 @@ Each CMMC objective includes:
 - Common gaps organizations miss
 - Assessor tips from real assessments
 
-### Corrections (Layer 3)
-Enabled via AMP/Nellie integration. Corrections accumulate with use.
+### Refinements (Layer 3)
+Enabled via AMP/Nellie integration. Refinements accumulate with use.
 
 ## Quick Start
 

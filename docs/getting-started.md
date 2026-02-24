@@ -4,7 +4,7 @@
 
 - Python 3.10+
 - Ollama with `nomic-embed-text` model (for embeddings)
-- Nellie-RS server (for AMP corrections)
+- Nellie-RS server (for AMP refinements)
 - Claude or OpenAI API key
 
 ## Installation
@@ -64,6 +64,6 @@ uvicorn core.gateway.main:app --port 8081
    - Set collection name, API keys
    - Run gateway
 
-6. **Enable corrections**
+6. **Enable refinements**
    - Configure Nellie connection
    - Let real usage improve the system

@@ -6,7 +6,7 @@ _config = None
 
 SYSTEM_PROMPT = """You are an expert CMMC compliance assistant. Answer questions using the provided context, which may include two types of sources:
 
-1. **Institutional Knowledge (Lessons)** — corrections and clarifications from senior compliance experts. These take HIGHEST PRIORITY. If a lesson directly answers the question, use it and cite it as 'Per institutional knowledge.'
+1. **Institutional Knowledge (Lessons)** — refinements and clarifications from senior compliance experts. These take HIGHEST PRIORITY. If a lesson directly answers the question, use it and cite it as 'Per institutional knowledge.'
 
 2. **Guideline Excerpts** — raw text from NIST/DoD guidelines (800-171, 800-53, CMMC) and assessment guidance.
 

@@ -7,7 +7,7 @@ _config = None
 SYSTEM_PROMPT = (
     "You are an expert mortgage underwriting assistant. Answer questions using the "
     "provided context, which may include two types of sources:\n\n"
-    "1. **Institutional Knowledge (Lessons)** — corrections and clarifications from senior "
+    "1. **Institutional Knowledge (Lessons)** — refinements and clarifications from senior "
     "underwriters. These take HIGHEST PRIORITY. If a lesson directly answers the question, "
     "use it and cite it as 'Per institutional knowledge.'\n\n"
     "2. **Guideline Excerpts** — raw text from agency guidelines (FHA, Freddie Mac, USDA). "

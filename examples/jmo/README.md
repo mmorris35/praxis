@@ -25,8 +25,8 @@ The "what underwriters actually check" mappings:
 - AUS findings interpretation (DU/LP)
 - Income calculation methods by employment type
 
-### Layer 3 (Corrections) — Ready
-AMP/Nellie integration enabled. Corrections compound with real underwriting Q&A.
+### Layer 3 (Refinement) — Ready
+AMP/Nellie integration enabled. Refinements compound with real underwriting Q&A.
 
 ## Quick Start
 
@@ -58,7 +58,7 @@ uvicorn gateway.main:app --port 8081
 Same three-layer Praxis pattern as CMMC-Buddy:
 - **Layer 1**: PDF guidelines → section-based chunks → ChromaDB
 - **Layer 2**: Expert translation (needed)
-- **Layer 3**: AMP corrections (ready)
+- **Layer 3**: AMP refinements (ready)
 
 ## License
 

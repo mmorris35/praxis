@@ -35,9 +35,9 @@ AI Mortgage Originator Assistant. Multi-agent system that automates loan file as
 | Automated pre-underwriting | ✅ Core feature | ❌ Not the use case |
 | LOS integration | ✅ Encompass | ❌ Standalone |
 | Guideline Q&A | ⚠️ Scenario Desk (static) | ✅ Core feature |
-| Learning from corrections | ❌ No evidence | ✅ AMP — core differentiator |
+| Learning from refinements | ❌ No evidence | ✅ AMP — core differentiator |
 | Institutional knowledge capture | ❌ No evidence | ✅ Lessons persist forever |
-| Company overlay learning | ⚠️ Pre-configured | ✅ Learned from expert corrections |
+| Company overlay learning | ⚠️ Pre-configured | ✅ Learned from expert refinements |
 | Domain-agnostic | ❌ Mortgage only | ✅ Any regulatory domain |
 | Expert knowledge retention | ❌ Knowledge walks when expert leaves | ✅ Knowledge stays in AMP |
 
@@ -53,7 +53,7 @@ They solve different problems for different buyers:
 
 ### Competitive Risk
 
-Friday Harbor's "Scenario Desk" feature is the closest overlap — it "structures deals and answers questions with knowledge of the guidelines." If they add a feedback/correction loop (learning from underwriter corrections), they'd drift into JMO's lane.
+Friday Harbor's "Scenario Desk" feature is the closest overlap — it "structures deals and answers questions with knowledge of the guidelines." If they add a feedback/refinement loop (learning from underwriter refinements), they'd drift into JMO's lane.
 
 **However:**
 - Their architecture is multi-agent workflow, not knowledge management
@@ -91,16 +91,16 @@ They don't replace each other. Friday Harbor is the assembly line. JMO is the ex
 ### Generic RAG Tools (Glean, Guru, etc.)
 - Enterprise search/knowledge tools
 - Can ingest mortgage guidelines
-- No domain expertise, no correction loop, no AMP
+- No domain expertise, no refinement loop, no AMP
 - JMO without the learning = these tools
 
 ---
 
 ## JMO's Defensible Position
 
-1. **AMP is architecturally unique.** No competitor has a correction-to-lesson feedback loop that compounds over time.
+1. **AMP is architecturally unique.** No competitor has a refinement-to-lesson feedback loop that compounds over time.
 2. **Domain-agnostic.** Friday Harbor is locked into mortgage. JMO works anywhere there are dense guidelines and tired experts.
-3. **The moat deepens with use.** 6 months of corrections can't be replicated by uploading PDFs. That's institutional knowledge, not data.
+3. **The moat deepens with use.** 6 months of refinements can't be replicated by uploading PDFs. That's institutional knowledge, not data.
 4. **Open architecture.** AMP protocol means any memory server slots in — not locked to one vendor.
 5. **Low barrier to entry.** Upload PDFs → get answers in minutes. No LOS integration required. No enterprise sales cycle for initial adoption.
 
