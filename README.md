@@ -51,6 +51,11 @@ The more the system is used, the smarter it gets.
 
 ## Examples
 
+### JMO (Original Proof of Concept)
+The original implementation that proved the pattern works. Generic compliance assistant with AMP corrections.
+
+See [examples/jmo](./examples/jmo/)
+
 ### CMMC-Buddy
 Complete CMMC Level 2 compliance assistant with:
 - 1,955 framework controls (800-53, 800-171, CSF, FedRAMP)
