@@ -8,17 +8,20 @@ Praxis turns dense documentation into actionable expertise — not a chatbot tha
 
 Every complex field has the same problem: mountains of documentation that takes years to master. Praxis solves this with a three-layer architecture:
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  LAYER 3: Refinements                                   │
-│  └─ Learns from use — the flywheel                      │
-├─────────────────────────────────────────────────────────┤
-│  LAYER 2: Institutional Knowledge (optional)            │
-│  └─ Your org's expertise on top of the docs             │
-├─────────────────────────────────────────────────────────┤
-│  LAYER 1: Foundation                                    │
-│  └─ Structured domain docs — commodity                  │
-└─────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph L3["🔄 LAYER 3: Refinements"]
+        L3D["Learns from use — the flywheel"]
+    end
+    subgraph L2["🧠 LAYER 2: Institutional Knowledge (optional)"]
+        L2D["Your org's expertise on top of the docs"]
+    end
+    subgraph L1["📚 LAYER 1: Foundation"]
+        L1D["Structured domain docs — commodity"]
+    end
+    
+    L3 --> L2
+    L2 --> L1
 ```
 
 ### Layer 1: Foundation
@@ -32,29 +35,66 @@ AMP (Agent Memory Protocol) integration via Nellie. Experts refine responses, an
 
 The more the system is used, the smarter it gets.
 
+## How It Works
+
+```mermaid
+flowchart LR
+    Q["🔍 Query"] --> R{"Recall"}
+    R -->|Check refinements| N[("Nellie")]
+    R --> S["Search"]
+    S -->|Hybrid search| V[("ChromaDB")]
+    V --> C["Context Assembly"]
+    N --> C
+    C --> L["LLM"]
+    L --> A["💬 Answer"]
+    A --> U{"User"}
+    U -.->|Refine| N
+```
+
+## The Flywheel
+
+Refinements compound over time. Each one makes the system smarter.
+
+```mermaid
+flowchart LR
+    USE["Use system"] --> GAP["Spot gap"]
+    GAP --> REFINE["Submit refinement"]
+    REFINE --> STORE["Store in Nellie"]
+    STORE --> RECALL["Recall next time"]
+    RECALL --> BETTER["Better answer"]
+    BETTER --> USE
+```
+
+| Timeline | Refinements | Result |
+|----------|-------------|--------|
+| Week 1 | ~50 | ~85% accuracy |
+| Month 1 | 200+ | Handles edge cases |
+| Month 6 | 500+ | Institutional knowledge that can't be replicated |
+
 ## Technical Stack
 
-- **Embeddings**: nomic-embed-text via Ollama
-- **Vector DB**: ChromaDB
-- **RAG**: Hybrid search (exact ID match + semantic)
-- **LLM**: Claude/GPT for response generation
-- **Memory**: Nellie-RS (AMP implementation)
+| Component | Technology |
+|-----------|------------|
+| Embeddings | nomic-embed-text via Ollama |
+| Vector DB | ChromaDB |
+| RAG | Hybrid search (exact ID + semantic) |
+| LLM | Claude, GPT, or local models |
+| Memory | Nellie-RS (AMP implementation) |
 
 ## Examples
-
-### J-Mo (Mortgage Underwriting Compliance)
-Mortgage underwriting assistant for agency guidelines (Fannie, Freddie, FHA, VA). Needs Layer 1 foundation data (selling guides, HUD 4000.1) and Layer 2 expert translation (what underwriters actually check, common suspension reasons, condition clearing).
-
-See [examples/jmo](./examples/jmo/)
 
 ### CMMC-Buddy
 Complete CMMC Level 2 compliance assistant with:
 - 1,955 framework controls (800-53, 800-171, CSF, FedRAMP)
 - 320 CMMC objectives mapped to Microsoft Graph API calls
 - PowerShell and curl commands for evidence collection
-- Assessment guidance, common gaps, and assessor tips
 
 See [examples/cmmc-buddy](./examples/cmmc-buddy/)
+
+### J-Mo
+Mortgage underwriting assistant for agency guidelines (Fannie, Freddie, FHA, VA).
+
+See [examples/jmo](./examples/jmo/)
 
 ## Quick Start
 
@@ -73,26 +113,41 @@ pip install -r requirements.txt
 cp config/gateway.yaml.template config/gateway.yaml
 # Edit with your API keys
 
-# Ingest data
+# Ingest & run
 python -m ingest.ingest_full
-
-# Run
 uvicorn gateway.main:app --host 0.0.0.0 --port 8081
 ```
 
 ## Applicable Domains
 
-The Praxis pattern works for any field with:
-- Dense official documentation
-- Expert knowledge required for practical application
-- Real-world edge cases that improve with refinements
+```mermaid
+flowchart TB
+    P((Praxis)) --> C["Compliance"]
+    P --> R["Regulatory"]
+    P --> L["Legal"]
+    P --> T["Technical"]
+    P --> M["Medical"]
+    
+    C --> C1["CMMC"]
+    C --> C2["HIPAA"]
+    C --> C3["SOC 2"]
+    C --> C4["ISO 27001"]
+    
+    R --> R1["FDA"]
+    R --> R2["EPA"]
+    R --> R3["Financial"]
+    
+    L --> L1["Case Law"]
+    L --> L2["Contracts"]
+    
+    T --> T1["Engineering Standards"]
+    T --> T2["Building Codes"]
+    
+    M --> M1["Clinical Guidelines"]
+    M --> M2["Diagnostics"]
+```
 
-Examples:
-- **Compliance**: CMMC, HIPAA, SOC 2, ISO 27001, PCI-DSS
-- **Regulatory**: FDA, EPA, OSHA, financial regulations
-- **Legal**: Case law research, contract analysis
-- **Technical**: Engineering standards, building codes
-- **Medical**: Clinical guidelines, diagnostic support
+Any field with dense documentation + expert knowledge required = Praxis candidate.
 
 ## License
 
