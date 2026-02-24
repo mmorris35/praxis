@@ -1,24 +1,31 @@
-# RealPraxis: Real Estate Sales Assistant
+# RealPraxis: Bay Area Real Estate Assistant
 
-A Praxis implementation for residential real estate brokerages.
+A Praxis implementation for San Francisco Bay Area residential real estate brokerages.
+
+## Why the Bay Area?
+
+The Bay Area is **the hardest real estate market in America** to practice in:
+- City-specific disclosure requirements (SF, Oakland, Berkeley all different)
+- Rent control in multiple jurisdictions with different rules
+- Point-of-sale ordinances that vary by city
+- TIC properties, ADUs, soft-story retrofits
+- $1M+ price points where mistakes are expensive
+- Hyper-competitive market dynamics (multiple offers, waived contingencies)
+
+**If it works here, it works anywhere.**
+
+---
 
 ## The Problem
 
-Real estate agents ask the same questions constantly:
-- "What disclosures do I need for this property?"
-- "Can the buyer back out now?"
-- "How do I handle this multiple offer situation?"
-- "What's our policy on dual agency?"
+Bay Area agents face unique complexity:
+- "What disclosures do I need for this Oakland duplex?"
+- "Is this SF property subject to soft-story retrofit?"
+- "Can my buyer waive the inspection contingency? Should they?"
+- "This Berkeley property has a rental unit — what am I required to disclose?"
+- "What's the 3R report and when do I need it?"
 
-Managing brokers spend hours answering. Top producers hoard knowledge. New agents take months to get productive. When someone leaves, their expertise walks out the door.
-
-## The Solution
-
-An AI assistant that:
-- Knows state regulations, MLS rules, and standard forms
-- Knows your brokerage's policies and procedures
-- Learns from your top producers' real-world experience
-- Gets smarter every time someone uses it
+Managing brokers spend hours on these questions. Top producers know the answers but hoard the knowledge. New agents drown.
 
 ---
 
@@ -28,194 +35,317 @@ An AI assistant that:
 | Source | Description |
 |--------|-------------|
 | Fair Housing Act | Protected classes, prohibited practices |
-| RESPA | Settlement procedures, disclosures |
-| TILA / Reg Z | Loan advertising rules |
-| Lead-Based Paint Disclosure | Pre-1978 homes |
+| RESPA | Settlement procedures, kickback rules |
+| Lead-Based Paint Disclosure | Pre-1978 homes (most Bay Area housing) |
 
-### State (California example)
+### California State
 | Source | Description |
 |--------|-------------|
-| DRE Regulations | Licensing, agency, disclosure requirements |
+| DRE Regulations | Licensing, agency, broker supervision |
 | Civil Code §1102+ | Transfer Disclosure Statement (TDS) |
-| Natural Hazard Disclosure | Flood, fire, earthquake zones |
+| Natural Hazard Disclosure (NHD) | Flood, fire, earthquake, environmental |
 | Mello-Roos / Special Tax | District disclosures |
-| HOA Disclosures | CC&Rs, budget, litigation |
+| HOA Disclosures (Civil Code §4525) | Budget, reserves, litigation, CC&Rs |
+| AB 968 (2019) | Fire hardening disclosures |
+| SB 1079 (2020) | Foreclosure protections |
 
-### MLS
-| Source | Description |
-|--------|-------------|
-| MLS Rules & Regulations | Listing requirements, cooperation rules |
-| IDX/VOW Policies | Online display rules |
-| Lockbox Procedures | Access protocols |
+### Bay Area Local Associations
+| Association | Coverage |
+|-------------|----------|
+| **SFAR** (SF Association of Realtors) | San Francisco |
+| **CCAR** (Contra Costa AOR) | Contra Costa County |
+| **BRIDGEMLS** | East Bay, Tri-Valley |
+| **SAMCAR** (San Mateo County AOR) | Peninsula |
+| **SILVAR** (Santa Clara County) | South Bay |
+| **BAREIS** | North Bay (Marin, Sonoma, Napa) |
 
-### Forms (C.A.R. example)
+Each has supplemental forms and local rules beyond C.A.R.
+
+### C.A.R. Forms (Core)
 | Form | Purpose |
 |------|---------|
-| RPA | Residential Purchase Agreement |
-| AVID | Agent Visual Inspection Disclosure |
+| RPA-CA | Residential Purchase Agreement |
+| PRDS | Purchase agreement (Peninsula/South Bay variant) |
 | TDS | Transfer Disclosure Statement |
 | SPQ | Seller Property Questionnaire |
+| AVID | Agent Visual Inspection Disclosure |
+| NHD | Natural Hazard Disclosure |
+| FLD | Flood zone disclosure |
 | SBSA | Statewide Buyer Seller Advisory |
 | AD | Agency Disclosure |
-| ... | 50+ additional forms |
+| WCMD | Water Conserving Fixtures Compliance |
+| SSD | Smoke/CO Detector Compliance |
 
 ---
 
-## Layer 2: Institutional Knowledge
+## City-Specific Requirements (The Hard Part)
 
-This is where it gets valuable. What your brokerage actually does:
+### San Francisco
+| Requirement | Details |
+|-------------|---------|
+| **3R Report** | Required disclosure of permits, zoning, code violations |
+| **Sewer Lateral Ordinance** | Compliance required at sale for most properties |
+| **Soft-Story Retrofit** | Wood-frame buildings 3+ stories, 5+ units |
+| **Rent Ordinance** | Rent control, just cause eviction, buyout disclosures |
+| **Condo Conversion** | Lottery, tenant protections |
+| **Ellis Act** | Specific rules for removing rental units |
+| **Energy/Water Conservation** | Point-of-sale compliance |
+| **Residential Rent Stabilization** | Applies to most buildings pre-1979 |
+| **ADU Regulations** | Specific SF rules beyond state |
 
-### Policies & Procedures
-- Commission structures and splits
-- Transaction coordinator workflow
-- Dual agency policy (beyond legal minimum)
-- Team structures and responsibilities
-- Escalation procedures
+### Oakland
+| Requirement | Details |
+|-------------|---------|
+| **Soft-Story Retrofit** | Mandatory for qualifying buildings |
+| **Rent Adjustment Program** | Rent control for pre-1983 buildings |
+| **Just Cause for Eviction** | Required disclosures |
+| **Tenant Protection Ordinance** | Enhanced protections |
+| **Sewer Lateral** | Compliance may be required |
+| **Point-of-Sale Energy** | Depends on property type |
 
-### Local Market Knowledge
-- Typical earnest money amounts
-- Common contingency timelines
-- Who customarily pays for what (title, escrow, etc.)
-- Local inspection norms
-- Neighborhood-specific considerations
+### Berkeley
+| Requirement | Details |
+|-------------|---------|
+| **Rent Stabilization Board** | Strict rent control |
+| **Inspection Requirement** | Pre-sale inspection for some properties |
+| **Smoke Detector Hardwire** | Point-of-sale requirement |
+| **Sewer Lateral** | Compliance at sale |
+| **Energy Audit** | RECO compliance |
 
-### Best Practices (from top producers)
-- Multiple offer handling strategies
-- Inspection negotiation tactics
-- How to read a preliminary title report
-- When to recommend specific inspections
-- Red flags in disclosures
-- How to price competitively
+### Other Bay Area Cities
+| City | Notable Requirements |
+|------|---------------------|
+| **San Jose** | Rent control (AB 1482), apartment rent ordinance |
+| **Mountain View** | CSFRA rent control |
+| **East Palo Alto** | Strict rent control |
+| **Richmond** | Rent control |
+| **Alameda** | Rent control for some units |
+| **Hayward** | Rent control |
+| **Fremont** | Mobile home rent control |
 
 ---
 
-## Layer 3: Refinements
+## Layer 2: Bay Area Institutional Knowledge
 
-As agents use the system, they teach it:
+### Market Dynamics
+- **Multiple offers are normal** — strategy matters
+- **Waived contingencies** — when appropriate vs. reckless
+- **Pre-listing inspections** — common practice, seller provides
+- **As-is sales** — understanding what this really means
+- **Appraisal gaps** — how to handle in competitive situations
+- **Backup offers** — when and how to structure
 
-### Example Refinements
-- "Actually, in our market, buyers typically ask for 17-day inspection contingency, not 10"
-- "For properties in [SUBDIVISION], always check for the CC&R amendment about solar panels"
-- "When dealing with [LENDER], expect 45-day close minimum"
-- "Our office policy is to always recommend sewer lateral inspection for pre-1980 homes"
+### Local Customs
+| Custom | Bay Area Norm |
+|--------|---------------|
+| Earnest money | 3% typical, higher for competitive offers |
+| Inspection contingency | 7-10 days (sometimes 0 in hot markets) |
+| Loan contingency | 17-21 days |
+| Close of escrow | 30 days typical, 21 for competitive |
+| Who pays title | Varies by county (split common) |
+| Who pays transfer tax | City-specific (SF = seller, some cities = split) |
+| Pre-inspections | Seller commonly provides reports upfront |
+
+### Property Types (Bay Area Specific)
+| Type | Complexity |
+|------|------------|
+| **TIC (Tenancy in Common)** | SF specialty — financing, insurance, conversion rights |
+| **Condo** | HOA diligence, litigation history |
+| **2-4 Units** | Rent control analysis, income verification |
+| **SFR with ADU** | Permit status, rental income, compliance |
+| **Soft-Story Building** | Retrofit status, cost, compliance deadline |
+| **Historic/Mills Act** | Tax benefits, restrictions |
+
+### Lender Knowledge
+- **Local lenders** who know Bay Area quirks (TIC financing, etc.)
+- **Typical timelines** by lender
+- **Which lenders** handle tricky property types
+- **Appraisal issues** common in the market
+
+---
+
+## Layer 3: Refinements (Examples)
+
+What Bay Area agents would teach the system:
+
+> "For any property in SF built before 1979, always verify rent control status even if owner-occupied — the unit may have protected tenants if ever rented."
+
+> "In Oakland, soft-story retrofit compliance is on the seller, but get written verification — some owners claim compliance but never filed."
+
+> "When a Berkeley buyer asks about the property's rental history, remember RECO requires energy audit compliance at sale."
+
+> "For TICs in SF, always verify the TIC agreement allows refinancing — some old agreements restrict it."
+
+> "In multiple offer situations in this market, love letters don't work anymore and create Fair Housing risk. Focus on terms, not feelings."
+
+> "3R reports in SF can take 3-4 weeks right now. If listing in SF, order it immediately."
 
 ---
 
 ## Example Queries
 
-### Disclosures
-> **Q:** "What disclosures are required for a 1965 home in a fire zone with an HOA?"
+### City-Specific Compliance
+> **Q:** "I'm listing a 1960s duplex in Oakland with a long-term tenant. What do I need?"
 >
-> **A:** Required disclosures:
-> - Lead-Based Paint Disclosure (pre-1978)
-> - Transfer Disclosure Statement (TDS)
-> - Natural Hazard Disclosure (fire zone)
-> - HOA documents (CC&Rs, budget, minutes, litigation)
-> - Mello-Roos disclosure (if applicable)
+> **A:** For an Oakland duplex (pre-1983):
+> 
+> **Rent Control:**
+> - Property is covered by Oakland Rent Adjustment Program
+> - Provide tenant with required disclosures
+> - Verify current rent is at or below allowed limit
+> - Buyer must honor existing lease and rent control
 >
-> Forms needed: [LIST]
-> Common mistakes: [LIST]
+> **Point of Sale:**
+> - Check soft-story retrofit status (mandatory for 2+ story, 2+ units)
+> - Sewer lateral compliance may be required
+> 
+> **Disclosures:**
+> - TDS, NHD, lead-based paint (pre-1978)
+> - Rent stabilization disclosure to buyer
+> - Just Cause eviction requirements
+>
+> **Forms:** [LIST]
+>
+> ⚠️ *Recommend: Consult with Oakland rent board before listing. Verify retrofit status with city.*
 
-### Contingencies
-> **Q:** "Buyer wants to cancel during inspection contingency. What's the process?"
+### TIC Properties
+> **Q:** "Buyer wants to purchase a 2-unit TIC in SF. What should I tell them about financing?"
 >
-> **A:** If within contingency period:
-> 1. Buyer delivers Notice to Seller to Perform or Cancellation
-> 2. Use form [CR] for cancellation
-> 3. Earnest money release requires mutual agreement [form]
+> **A:** TIC financing in SF:
 >
-> Watch out for: Contingency removal deadlines, proper delivery method
+> **Financing Options:**
+> - Fractional/TIC loans (specialty lenders: Sterling, Patelco, First Republic legacy)
+> - Higher rates than condo (typically 0.5-1% premium)
+> - Larger down payment often required (20-25%)
 >
-> *Per brokerage policy: Always consult with [MANAGER] before advising on cancellation.*
+> **TIC Agreement Review:**
+> - Verify refinancing rights
+> - Check sale approval process
+> - Understand expense sharing
+> - Review buyout provisions
+>
+> **Condo Conversion:**
+> - Check lottery status / eligibility
+> - Bypass eligibility if 6+ years ownership
+>
+> *Per [TOP PRODUCER]: Always recommend TIC attorney review before removing contingencies. Agreement terms vary wildly and can affect resale.*
 
-### Agency
-> **Q:** "Listing agent wants to also represent buyer. What do I need?"
+### Multiple Offers
+> **Q:** "My listing has 12 offers. How do I handle this?"
 >
-> **A:** Dual agency in California requires:
-> - Written consent from both parties (AD form)
-> - Disclosure of limitations (can't advocate for either side on price)
-> - Both parties sign acknowledgment
+> **A:** With 12 offers in this market:
 >
-> *Brokerage policy: Dual agency requires broker approval. Submit request to [PROCESS].*
-
-### Negotiations
-> **Q:** "We have 5 offers on a listing. How should we handle this?"
+> **Options:**
+> 1. Review all, accept best overall (terms + price + certainty)
+> 2. Call for highest and best (set deadline, 24-48 hrs)
+> 3. Counter top 2-3 with specific terms
 >
-> **A:** Multiple offer options:
-> 1. Accept best offer
-> 2. Counter one offer
-> 3. Counter multiple offers (disclose to all)
-> 4. Request highest and best from all
+> **Evaluation Criteria:**
+> - Price (but not everything)
+> - Down payment percentage (more = more certainty)
+> - Contingency waiver/shortening
+> - Loan pre-approval strength (local lender vs. online)
+> - Close of escrow timeline
+> - Appraisal gap coverage
 >
-> *Per [TOP PRODUCER]: In this market, calling for highest-and-best with 24hr deadline typically yields 5-10% over asking. Make sure to disclose multiple offer situation to all parties.*
+> **Required Disclosures:**
+> - Must disclose existence of multiple offers if asked
+> - Must present all offers to seller
+> - No cherry-picking or hiding offers
+>
+> *Bay Area norm: Pre-inspection by seller + short contingencies + strong pre-approval typically wins over highest price with weak terms.*
 
 ---
 
-## Target Customer
+## Target Customer: Bay Area Brokerages
 
 ### Ideal Profile
-- **Size:** 20-200 agents (big enough to have pain, small enough to decide quickly)
-- **Pain:** Managing broker overwhelmed with questions
-- **Trigger:** Recent turnover of experienced agent, new agent class, compliance incident
-- **Champion:** Managing broker, Director of Training, or COO
+| Criteria | Target |
+|----------|--------|
+| Size | 25-150 agents |
+| Markets | SF, Peninsula, East Bay, South Bay |
+| Pain | Agents asking city-specific questions constantly |
+| Champion | Managing broker, Director of Training |
+| Trigger | New agents drowning, compliance scare, key agent left |
 
-### Red Flags
-- Tiny brokerage (1-5 agents) — not enough volume
-- Mega-brokerage (1000+ agents) — too slow to decide
-- No documented P&P — nothing to ingest
-- "We just use ChatGPT" — need to show differentiation
-
----
-
-## Implementation Notes
-
-### Data Sources
-- State real estate commission website (regs)
-- MLS rules (usually PDF from MLS)
-- Form library (C.A.R., local association)
-- Brokerage P&P manual
-- Training materials
-- Top producer interviews (2-3 hours)
-
-### Chunking Strategy
-- One form = one chunk (with metadata: form number, purpose, when to use)
-- Regulations by section
-- P&P by topic
-- Q&A pairs from training materials
-
-### Integration Opportunities
-- Transaction management system (Dotloop, SkySlope)
-- CRM (Follow Up Boss, kvCORE)
-- MLS (for property-specific context)
+### Named Targets (Research Needed)
+- **Compass** (local offices)
+- **Coldwell Banker** (Bay Area offices)
+- **Intero**
+- **Sereno**
+- **Vanguard Properties**
+- **Zephyr Real Estate**
+- **Red Oak Realty**
+- **Keller Williams** (Bay Area offices)
+- **Independent brokerages** (50-100 agents)
 
 ---
 
-## Pricing Consideration
+## Data Sources to Acquire
 
-Real estate brokerages are cost-conscious. Consider:
-- Per-agent pricing ($X/agent/month)
-- Pilot at reduced rate to prove value
-- ROI story: If managing broker saves 5 hrs/week = $X/year
+### Must Have
+- [ ] C.A.R. forms library (member access)
+- [ ] SFAR supplemental forms
+- [ ] SF 3R report requirements + sample
+- [ ] SF Rent Ordinance summary
+- [ ] Oakland Rent Adjustment Program rules
+- [ ] Berkeley rent control guide
+- [ ] Soft-story retrofit requirements (SF, Oakland)
+- [ ] Sewer lateral ordinances by city
+- [ ] NHD report sample and interpretation guide
+
+### Nice to Have
+- [ ] Sample brokerage P&P manual
+- [ ] MLS rules (SFARMLS, BRIDGEMLS)
+- [ ] Title company local customs guide
+- [ ] Escrow timeline guides
+- [ ] Lender comparison (TIC, jumbo, etc.)
 
 ---
 
-## Competitive Landscape
+## Implementation Plan
 
-| Competitor | What They Do | Gap |
-|------------|--------------|-----|
-| ChatGPT/Claude | General AI | No real estate knowledge, no learning |
-| Lofty AI | Lead response | Not compliance/training focused |
-| Inside Real Estate | CRM + websites | No expert system |
-| Brokerage training platforms | Static content | Doesn't learn, not conversational |
+### Phase 1: SF Focus (Week 1-4)
+- Ingest C.A.R. forms
+- Ingest SF-specific requirements (3R, rent control, sewer, soft-story)
+- Build basic Q&A capability
+- Test with SF-specific queries
 
-**Our edge:** Learns from your top producers. Captures institutional knowledge. Gets smarter with use.
+### Phase 2: Expand to East Bay (Week 5-6)
+- Add Oakland, Berkeley requirements
+- Add rent control variations
+- Test with multi-city queries
+
+### Phase 3: Full Bay Area (Week 7-8)
+- Add Peninsula, South Bay, North Bay
+- Add county-specific customs
+- Layer 2: Top producer interviews
+- Launch pilot
+
+---
+
+## Competitive Advantage
+
+**No one else has this.**
+
+Generic AI doesn't know:
+- When you need a 3R report
+- Which cities have soft-story requirements
+- How TIC financing works
+- That Berkeley requires pre-sale inspection for some properties
+- What "Oakland rent control" actually means for a sale
+
+**We will.**
+
+And we'll get smarter every time a Bay Area agent teaches us something new.
 
 ---
 
 ## Next Steps
 
-1. [ ] Identify pilot brokerage (California ideal for first — most complex disclosures)
-2. [ ] Obtain C.A.R. forms library
-3. [ ] Get sample brokerage P&P manual
-4. [ ] Interview 2-3 experienced agents for Layer 2
-5. [ ] Build demo with California focus
+1. [ ] Connect with Bay Area brokerage contact
+2. [ ] Acquire C.A.R. forms library access
+3. [ ] Download SF, Oakland, Berkeley city requirements
+4. [ ] Build Layer 1 ingest pipeline
+5. [ ] Identify 2-3 top producers for Layer 2 interviews
+6. [ ] Launch SF-only demo
