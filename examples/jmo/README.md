@@ -1,31 +1,51 @@
-# JMO — The Original Praxis Proof of Concept
+# JMO — Corporate & Investor Compliance Assistant
 
-JMO (Just My Opinion) was the original implementation that proved the Praxis pattern works. It demonstrated:
+JMO (Just My Opinion) helps organizations navigate corporate governance, investor requirements, and proprietary compliance guidelines.
 
-1. RAG over compliance documentation
-2. AMP corrections that persist and improve responses
-3. The three-layer architecture
+## Status: Foundation Ready, Expert Layer Needed
 
-## What JMO Proved
+### Current State
+- ✅ Core Praxis architecture working
+- ✅ AMP corrections enabled
+- ⏳ **Layer 1 (Foundation)**: Needs corporate/investor guideline documents
+- ⏳ **Layer 2 (Expert Translation)**: Needs "what investors actually want" mapping
 
-- Dense documentation can be made queryable
-- Expert corrections compound in value
-- The pattern generalizes beyond a single domain
+### Data Needed (Layer 1)
+- Corporate governance frameworks
+- Investor due diligence checklists
+- Board reporting requirements
+- Proprietary compliance guidelines (org-specific)
+- SEC/regulatory disclosure requirements
+- ESG reporting standards
 
-## Evolution
+### Expert Translation Needed (Layer 2)
+- What do investors actually look for during due diligence?
+- What are common governance gaps that kill deals?
+- How do you prepare for board presentations?
+- What evidence satisfies investor requirements?
+- Red flags that sophisticated investors catch
 
-JMO evolved into CMMC-Buddy when the expert translation layer (Layer 2) was added — specifically the mapping of CMMC objectives to Microsoft Graph API calls.
+## Architecture
 
-The core architecture remained the same:
 ```
-Layer 3: Corrections (AMP)     ← JMO had this
-Layer 2: Expert Translation    ← CMMC-Buddy added this
-Layer 1: Foundation Data       ← JMO had this
+┌─────────────────────────────────────────────────────────┐
+│  LAYER 3: Corrections (AMP)              ✅ READY       │
+│  └─ Self-improving via real-world use                   │
+├─────────────────────────────────────────────────────────┤
+│  LAYER 2: Expert Translation             ⏳ NEEDED      │
+│  └─ "What investors actually want" mappings             │
+│     - Due diligence expectations                        │
+│     - Board presentation requirements                   │
+│     - Common gaps that kill deals                       │
+├─────────────────────────────────────────────────────────┤
+│  LAYER 1: Foundation Data                ⏳ NEEDED      │
+│  └─ Corporate governance frameworks                     │
+│     - Investor guidelines                               │
+│     - Proprietary org-specific policies                 │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ## Running JMO
-
-JMO uses the same core gateway as CMMC-Buddy. The difference is in the data:
 
 ```bash
 cd examples/jmo
@@ -36,15 +56,37 @@ pip install -r ../../requirements.txt
 # Configure
 export ANTHROPIC_API_KEY="your-key"
 
-# Ingest your foundation data
-python -m core.ingest.ingest_full
+# Add your foundation data to data/structured/
+# Then create an ingest script for your data format
 
 # Run
 uvicorn core.gateway.main:app --port 8081
 ```
 
-## Lesson Learned
+## Comparison with CMMC-Buddy
 
-JMO showed that Layer 1 (foundation data) + Layer 3 (corrections) creates a useful system. But the real value unlock came from Layer 2 (expert translation) — the "how to actually do it" that takes domain expertise to build.
+| Aspect | CMMC-Buddy | JMO |
+|--------|------------|-----|
+| Domain | CMMC/NIST compliance | Corporate/investor compliance |
+| Layer 1 | OSCAL frameworks (public) | Corporate guidelines (often proprietary) |
+| Layer 2 | Graph API mappings (built) | Investor expectations (needed) |
+| Layer 3 | AMP corrections | AMP corrections |
+| Status | Production-ready | Foundation needed |
 
-That insight led to Praxis as a generalizable framework.
+## Contributing Layer 2
+
+If you have expertise in:
+- Investor relations
+- Corporate governance
+- Due diligence processes
+- Board operations
+
+...the expert translation layer needs your knowledge. The pattern is the same as CMMC-Buddy:
+1. What does the audience (investors/board) actually want?
+2. What specific evidence satisfies them?
+3. What are common gaps that cause problems?
+4. What are the insider tips from experience?
+
+## License
+
+Proprietary. Part of Praxis.
