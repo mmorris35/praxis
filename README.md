@@ -81,6 +81,16 @@ flowchart LR
 | LLM | Claude, GPT, or local models |
 | Memory | Nellie-RS (AMP implementation) |
 
+## Live Demos
+
+All three POCs are deployed on Tailscale Funnel:
+
+| Demo | URL | Description |
+|------|-----|-------------|
+| **J-Mo** | [radarr.tail72df04.ts.net/](https://radarr.tail72df04.ts.net/) | Mortgage underwriting assistant |
+| **CMMC-Buddy** | [radarr.tail72df04.ts.net/cmmc](https://radarr.tail72df04.ts.net/cmmc) | CMMC Level 2 compliance assistant |
+| **RealPraxis** | [radarr.tail72df04.ts.net/broker](https://radarr.tail72df04.ts.net/broker) | Bay Area real estate assistant |
+
 ## Examples
 
 ### CMMC-Buddy
@@ -95,6 +105,11 @@ See [examples/cmmc-buddy](./examples/cmmc-buddy/)
 Mortgage underwriting assistant for agency guidelines (Fannie, Freddie, FHA, VA).
 
 See [examples/jmo](./examples/jmo/)
+
+### RealPraxis
+Bay Area real estate compliance assistant with city-specific disclosure requirements.
+
+See [examples/real-estate](./examples/real-estate/)
 
 ## Quick Start
 
