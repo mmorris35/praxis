@@ -3,8 +3,11 @@
 import json
 import logging
 from pathlib import Path
-from core.wiki.models import WikiConfig
+from core.wiki.models import WikiConfig, WikiPage
 from core.wiki.generator import WikiGenerator
+from core.wiki.interlinker import WikiInterlinker
+from core.wiki.writer import WikiWriter
+from core.wiki.graph import KnowledgeGraph
 
 logger = logging.getLogger("praxis.wiki")
 
@@ -24,10 +27,31 @@ class IncrementalUpdater:
             return {"pages": []}
         return json.loads(log_path.read_text(encoding="utf-8"))
 
-    def detect_changes(self) -> dict:
+    def _load_existing_pages(self) -> list[WikiPage]:
+        """Load existing wiki pages from disk."""
+        pages = []
+        concepts_dir = self.output_dir / "concepts"
+        if not concepts_dir.exists():
+            return pages
+        last_gen = self._load_last_generation()
+        meta_by_slug = {p["slug"]: p for p in last_gen.get("pages", [])}
+        for md_file in concepts_dir.glob("*.md"):
+            slug = md_file.stem
+            meta = meta_by_slug.get(slug, {})
+            pages.append(WikiPage(
+                slug=slug,
+                title=meta.get("title", slug),
+                content=md_file.read_text(encoding="utf-8"),
+                sources=meta.get("sources", []),
+                layers=meta.get("layers", []),
+                chunk_ids=meta.get("chunk_ids", []),
+            ))
+        return pages
+
+    def detect_changes(self, chunks: list[dict] | None = None) -> dict:
         """Compare current ChromaDB state against last generation.
 
-        Returns dict with keys: new_chunks, modified_chunks, deleted_chunks, affected_slugs.
+        Returns dict with keys: new_chunks, deleted_chunks, affected_slugs, chunks, clusters.
         """
         last_gen = self._load_last_generation()
         last_chunk_ids: set[str] = set()
@@ -35,14 +59,15 @@ class IncrementalUpdater:
             if "chunk_ids" in page_meta:
                 last_chunk_ids.update(page_meta["chunk_ids"])
 
-        current_chunks = self.generator.extract_chunks()
-        current_chunk_ids = {c["id"] for c in current_chunks}
+        if chunks is None:
+            chunks = self.generator.extract_chunks()
+        current_chunk_ids = {c["id"] for c in chunks}
 
         new_ids = current_chunk_ids - last_chunk_ids
         deleted_ids = last_chunk_ids - current_chunk_ids
 
         affected_slugs = set()
-        clusters = self.generator.cluster_concepts(current_chunks)
+        clusters = self.generator.cluster_concepts(chunks)
         for cluster in clusters:
             cluster_ids = set(cluster.chunk_ids)
             if cluster_ids & (new_ids | deleted_ids):
@@ -53,11 +78,14 @@ class IncrementalUpdater:
             "deleted_chunks": len(deleted_ids),
             "affected_slugs": list(affected_slugs),
             "total_current_chunks": len(current_chunk_ids),
+            "chunks": chunks,
+            "clusters": clusters,
         }
 
     def update(self) -> list[str]:
-        """Regenerate only affected pages. Returns list of updated slugs."""
-        changes = self.detect_changes()
+        """Regenerate affected pages, re-interlink all, and update graph. Returns list of updated slugs."""
+        chunks = self.generator.extract_chunks()
+        changes = self.detect_changes(chunks=chunks)
         if not changes["affected_slugs"]:
             logger.info("No changes detected — wiki is up to date")
             return []
@@ -65,17 +93,29 @@ class IncrementalUpdater:
         logger.info(f"Detected {changes['new_chunks']} new, {changes['deleted_chunks']} deleted chunks")
         logger.info(f"Regenerating {len(changes['affected_slugs'])} affected pages")
 
-        chunks = self.generator.extract_chunks()
-        clusters = self.generator.cluster_concepts(chunks)
+        clusters = changes["clusters"]
         affected = [c for c in clusters if c.slug in changes["affected_slugs"]]
 
-        updated_slugs = []
+        new_pages = {}
         for cluster in affected:
             page = self.generator.generate_page(cluster)
-            page_path = self.output_dir / "concepts" / f"{page.slug}.md"
-            page_path.parent.mkdir(parents=True, exist_ok=True)
-            page_path.write_text(page.content, encoding="utf-8")
-            updated_slugs.append(page.slug)
-            logger.info(f"Updated: {page.title}")
+            new_pages[page.slug] = page
 
+        all_pages = self._load_existing_pages()
+        all_pages = [new_pages.get(p.slug, p) for p in all_pages]
+        for slug, page in new_pages.items():
+            if not any(p.slug == slug for p in all_pages):
+                all_pages.append(page)
+
+        linker = WikiInterlinker(all_pages)
+        all_pages = linker.interlink_all()
+
+        writer = WikiWriter(self.output_dir)
+        writer.write_all(all_pages)
+
+        graph = KnowledgeGraph(all_pages)
+        graph.write(self.output_dir)
+
+        updated_slugs = list(new_pages.keys())
+        logger.info(f"Updated {len(updated_slugs)} pages, re-interlinked all, rebuilt graph")
         return updated_slugs

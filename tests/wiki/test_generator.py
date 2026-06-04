@@ -84,6 +84,7 @@ class TestWikiWriter:
         log = json.loads(path.read_text())
         assert log["total_pages"] == 1
         assert log["pages"][0]["slug"] == "p1"
+        assert log["pages"][0]["chunk_ids"] == ["c1"]
 
     def test_write_all(self, tmp_path):
         writer = WikiWriter(tmp_path / "wiki")

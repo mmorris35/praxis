@@ -16,14 +16,21 @@ logger = logging.getLogger("praxis.wiki")
 class WikiGenerator:
     """Generates wiki pages from ChromaDB knowledge chunks using LLM distillation."""
 
-    def __init__(self, config: WikiConfig) -> None:
+    def __init__(self, config: WikiConfig, chroma_client: chromadb.ClientAPI | None = None) -> None:
         self.config = config
-        self._client: chromadb.ClientAPI | None = None
+        self._client: chromadb.ClientAPI | None = chroma_client
         self._collection: chromadb.Collection | None = None
+        self._anthropic: anthropic.Anthropic | None = None
+
+    def _get_anthropic(self) -> anthropic.Anthropic:
+        if self._anthropic is None:
+            self._anthropic = anthropic.Anthropic()
+        return self._anthropic
 
     def _get_collection(self) -> chromadb.Collection:
         if self._collection is None:
-            self._client = chromadb.PersistentClient(path=self.config.chroma_path)
+            if self._client is None:
+                self._client = chromadb.PersistentClient(path=self.config.chroma_path)
             embedding_fn = OllamaEmbeddingFunction(
                 model=self.config.embedding_model,
                 base_url=self.config.ollama_url,
@@ -110,7 +117,7 @@ Source chunks:
 
     def generate_page(self, cluster: ConceptCluster) -> WikiPage:
         """Use LLM to distill a concept cluster into a wiki page."""
-        client = anthropic.Anthropic()
+        client = self._get_anthropic()
         prompt = self._build_distillation_prompt(cluster)
 
         response = client.messages.create(

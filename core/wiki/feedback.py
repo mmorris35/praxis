@@ -1,7 +1,6 @@
 """Bidirectional RAG feedback — ingest wiki pages back into ChromaDB."""
 
 import logging
-from pathlib import Path
 import chromadb
 from core.gateway.rag import OllamaEmbeddingFunction
 from core.wiki.models import WikiConfig, WikiPage
@@ -14,14 +13,15 @@ class WikiFeedback:
 
     WIKI_PREFIX = "wiki:"
 
-    def __init__(self, config: WikiConfig) -> None:
+    def __init__(self, config: WikiConfig, chroma_client: chromadb.ClientAPI | None = None) -> None:
         self.config = config
-        self._client: chromadb.ClientAPI | None = None
+        self._client: chromadb.ClientAPI | None = chroma_client
         self._collection: chromadb.Collection | None = None
 
     def _get_collection(self) -> chromadb.Collection:
         if self._collection is None:
-            self._client = chromadb.PersistentClient(path=self.config.chroma_path)
+            if self._client is None:
+                self._client = chromadb.PersistentClient(path=self.config.chroma_path)
             embedding_fn = OllamaEmbeddingFunction(
                 model=self.config.embedding_model,
                 base_url=self.config.ollama_url,

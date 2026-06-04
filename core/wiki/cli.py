@@ -37,8 +37,11 @@ def generate(output: str, collection: str, chroma_path: str, no_feedback: bool, 
         chroma_path=chroma_path,
     )
 
+    import chromadb
+
     click.echo(f"Generating wiki from collection '{collection}'...")
-    gen = WikiGenerator(config)
+    chroma_client = chromadb.PersistentClient(path=chroma_path)
+    gen = WikiGenerator(config, chroma_client=chroma_client)
     pages = gen.generate_all()
 
     if not pages:
@@ -59,7 +62,7 @@ def generate(output: str, collection: str, chroma_path: str, no_feedback: bool, 
 
     if not no_feedback:
         click.echo("Ingesting wiki pages into ChromaDB...")
-        fb = WikiFeedback(config)
+        fb = WikiFeedback(config, chroma_client=chroma_client)
         fb.ingest_pages(pages)
         fb.remove_stale([p.slug for p in pages])
 

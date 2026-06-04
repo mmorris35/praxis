@@ -1,7 +1,7 @@
 """Data models for Wiki Mode."""
 
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel, Field
 
 
@@ -14,7 +14,6 @@ class WikiConfig(BaseModel):
     ollama_url: str = Field(default="http://localhost:11434")
     llm_model: str = Field(default="claude-sonnet-4-20250514")
     max_chunks_per_page: int = Field(default=10)
-    min_similarity: float = Field(default=0.3)
 
 
 class WikiPage(BaseModel):
@@ -35,5 +34,5 @@ class ConceptCluster(BaseModel):
     concept_name: str
     slug: str
     chunk_ids: list[str] = Field(default_factory=list)
-    chunks: list[dict] = Field(default_factory=list)
+    chunks: list[dict[str, Any]] = Field(default_factory=list)
     layer_sources: list[str] = Field(default_factory=list)

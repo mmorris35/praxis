@@ -47,6 +47,48 @@ class TestLinkInjection:
         assert "access-control" in audit_page.linked_from
 
 
+class TestHeadingSafe:
+    def test_no_links_in_headings(self):
+        pages = [
+            WikiPage(slug="access-control", title="Access Control", content="# Access Control\n\n## Overview\n\nRequires audit logging."),
+            WikiPage(slug="audit-logging", title="Audit Logging", content="# Audit Logging\n\nAccess control events."),
+        ]
+        linker = WikiInterlinker(pages)
+        linked = linker.interlink_all()
+        ac_page = next(p for p in linked if p.slug == "access-control")
+        for line in ac_page.content.splitlines():
+            if line.startswith("#"):
+                assert "[[" not in line
+
+    def test_no_links_in_code_blocks(self):
+        pages = [
+            WikiPage(slug="access-control", title="Access Control", content="# AC\n\n```\naudit logging config\n```\n\nSee audit logging docs."),
+            WikiPage(slug="audit-logging", title="Audit Logging", content="# Audit Logging\n\nLogging."),
+        ]
+        linker = WikiInterlinker(pages)
+        linked = linker.interlink_all()
+        ac_page = next(p for p in linked if p.slug == "access-control")
+        lines = ac_page.content.splitlines()
+        in_code = False
+        for line in lines:
+            if line.startswith("```"):
+                in_code = not in_code
+                continue
+            if in_code:
+                assert "[[" not in line
+
+
+class TestAliasCollision:
+    def test_alias_does_not_overwrite_primary(self):
+        pages = [
+            WikiPage(slug="access-control", title="Access Control", content="# Access Control\n\nSee AC policy."),
+            WikiPage(slug="access-control-policy", title="Access Control Policy", content="# ACP\n\nThe policy for access control."),
+        ]
+        linker = WikiInterlinker(pages)
+        index = linker.build_concept_index()
+        assert index["access control"] == "access-control"
+
+
 class TestNoLinksPage:
     def test_unrelated_page_no_links(self):
         pages = [

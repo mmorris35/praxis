@@ -16,31 +16,75 @@ class WikiInterlinker:
         """Build a mapping of concept names/aliases to page slugs."""
         self._concept_index = {}
         self._slug_to_title = {}
+        primaries: set[str] = set()
         for page in self.pages:
             self._slug_to_title[page.slug] = page.title
-            self._concept_index[page.title.lower()] = page.slug
+            key = page.title.lower()
+            self._concept_index[key] = page.slug
+            primaries.add(key)
+        for page in self.pages:
             words = page.title.split()
             if len(words) > 2:
-                self._concept_index[page.title.lower().removesuffix(" policy").strip()] = page.slug
+                alias = page.title.lower().removesuffix(" policy").strip()
+                if alias not in primaries:
+                    self._concept_index[alias] = page.slug
         return self._concept_index
+
+    def _split_protected(self, content: str) -> list[tuple[str, bool]]:
+        """Split content into (text, is_protected) segments. Protected = headings, code blocks."""
+        segments: list[tuple[str, bool]] = []
+        code_fence = re.compile(r"^```", re.MULTILINE)
+        heading = re.compile(r"^#{1,6}\s+.*$", re.MULTILINE)
+
+        fences = [(m.start(), m.end()) for m in code_fence.finditer(content)]
+        code_ranges: list[tuple[int, int]] = []
+        for i in range(0, len(fences) - 1, 2):
+            line_end = content.find("\n", fences[i + 1][1])
+            if line_end == -1:
+                line_end = len(content)
+            code_ranges.append((fences[i][0], line_end))
+
+        heading_ranges = [(m.start(), m.end()) for m in heading.finditer(content)]
+        protected = sorted(code_ranges + heading_ranges, key=lambda r: r[0])
+
+        pos = 0
+        for start, end in protected:
+            if start < pos:
+                continue
+            if pos < start:
+                segments.append((content[pos:start], False))
+            segments.append((content[start:end], True))
+            pos = end
+        if pos < len(content):
+            segments.append((content[pos:], False))
+
+        return segments
 
     def inject_links(self, page: WikiPage) -> WikiPage:
         """Inject [[wikilinks]] into a page's content for mentions of other concepts."""
         if not self._concept_index:
             self.build_concept_index()
 
-        content = page.content
+        segments = self._split_protected(page.content)
         links_to = []
 
         for term, target_slug in sorted(self._concept_index.items(), key=lambda x: -len(x[0])):
             if target_slug == page.slug:
                 continue
             pattern = re.compile(re.escape(term), re.IGNORECASE)
-            if pattern.search(content):
-                target_title = self._slug_to_title.get(target_slug, term)
-                content = pattern.sub(f"[[{target_title}]]", content, count=1)
+            matched = False
+            for idx, (text, protected) in enumerate(segments):
+                if protected:
+                    continue
+                if pattern.search(text):
+                    target_title = self._slug_to_title.get(target_slug, term)
+                    segments[idx] = (pattern.sub(f"[[{target_title}]]", text, count=1), False)
+                    matched = True
+                    break
+            if matched:
                 links_to.append(target_slug)
 
+        content = "".join(seg for seg, _ in segments)
         return WikiPage(
             slug=page.slug,
             title=page.title,
