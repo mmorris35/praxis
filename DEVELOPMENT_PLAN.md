@@ -393,10 +393,10 @@ if __name__ == "__main__":
 - [x] 0.1.2: Add CLI entry point with Click
 
 **Deliverables**:
-- [ ] Add `click>=8.1.0` to `requirements.txt`
-- [ ] Add `slugify>=0.0.1` or `python-slugify>=8.0.0` to `requirements.txt`
-- [ ] Verify install: `pip install -r requirements.txt`
-- [ ] Verify imports: `python -c "import click; from slugify import slugify; print('OK')"`
+- [x] Add `click>=8.1.0` to `requirements.txt`
+- [x] Add `slugify>=0.0.1` or `python-slugify>=8.0.0` to `requirements.txt`
+- [x] Verify install: `pip install -r requirements.txt`
+- [x] Verify imports: `python -c "import click; from slugify import slugify; print('OK')"`
 
 **Files to Modify**:
 - `requirements.txt` — append:
@@ -407,13 +407,13 @@ python-slugify>=8.0.0
 ```
 
 **Success Criteria**:
-- [ ] `pip install -r requirements.txt` completes with exit code 0
-- [ ] `python -c "import click; print(click.__version__)"` prints version
-- [ ] `python -c "from slugify import slugify; print(slugify('Access Control Policy'))"` prints "access-control-policy"
+- [x] `pip install -r requirements.txt` completes with exit code 0
+- [x] `python -c "import click; print(click.__version__)"` prints version
+- [x] `python -c "from slugify import slugify; print(slugify('Access Control Policy'))"` prints "access-control-policy"
 - [ ] Run `git add requirements.txt` and `git commit -m "feat(wiki): add wiki dependencies [0.1.3]"`
 - [ ] Run `git push -u origin feature/0.1-wiki-scaffolding`
 
-**Completion Notes**: _[to be filled by executor]_
+**Completion Notes**: Both wiki dependencies (click>=8.1.0 and python-slugify>=8.0.0) added to requirements.txt. pip install completes with exit code 0. Verified: click.__version__ prints "8.4.1", slugify('Access Control Policy') prints "access-control-policy" as expected. All success criteria met. Ready for git commit.
 
 ---
 

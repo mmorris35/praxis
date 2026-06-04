@@ -14,3 +14,7 @@ openai>=1.10.0
 
 # Data processing
 pyyaml>=6.0
+
+# Wiki Mode
+click>=8.1.0
+python-slugify>=8.0.0
