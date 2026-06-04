@@ -51,6 +51,148 @@ flowchart LR
     U -.->|Refine| N
 ```
 
+## Wiki Mode
+
+**Auto-generate a browsable, interlinked knowledge wiki from your three-layer knowledge base.**
+
+Wiki Mode transforms your expert system's ChromaDB into a structured, discoverable wiki with automatic interlinking and knowledge graph metadata. Perfect for knowledge exploration, onboarding, and gap analysis.
+
+### Features
+
+- **Automated wiki generation** from ChromaDB knowledge chunks
+- **Three-layer visibility annotations** — Foundation, Institutional, Refinement layers marked on every page
+- **Automatic interlinking** with [[wikilinks]] across related concepts
+- **Knowledge graph metadata** (graph.json, link-map.json) for visualization
+- **Bidirectional RAG** — generated wiki pages feed back into ChromaDB for retrieval
+- **Incremental updates** — only regenerate pages affected by new refinements
+- **Multiple export formats** — serve locally, export for distribution, or browse with included HTTP server
+
+### Quick Start
+
+```bash
+# Generate wiki from current knowledge base
+praxis wiki generate --output wiki/
+
+# Serve locally at http://localhost:8080
+praxis wiki serve --wiki-dir wiki/
+
+# Update wiki when refinements arrive
+praxis wiki update --output wiki/
+
+# Export for distribution
+praxis wiki export --wiki-dir wiki/ --output wiki-dist/ --format markdown
+```
+
+### CLI Commands
+
+#### `praxis wiki generate`
+Generates the complete wiki from ChromaDB chunks.
+
+```bash
+praxis wiki generate \
+  --output wiki/ \
+  --collection praxis \
+  --chroma-path data/chroma
+```
+
+**Options:**
+- `--output, -o` — Output directory (default: `wiki/`)
+- `--collection, -c` — ChromaDB collection name (default: `praxis`)
+- `--chroma-path` — Path to ChromaDB storage (default: `data/chroma`)
+- `--no-feedback` — Skip re-ingesting wiki pages into ChromaDB
+- `--verbose, -v` — Enable verbose logging
+
+**Pipeline:**
+1. Extract chunks from ChromaDB
+2. Cluster by concept (control_id, title)
+3. Generate markdown pages via LLM distillation
+4. Inject wikilinks across related concepts
+5. Build knowledge graph (graph.json, link-map.json)
+6. Upsert wiki pages back into ChromaDB for retrieval
+
+#### `praxis wiki update`
+Incrementally updates only pages affected by new refinements.
+
+```bash
+praxis wiki update --output wiki/ --collection praxis
+```
+
+Compares current ChromaDB state against last generation log, identifies new/deleted chunks, and regenerates only affected concept pages.
+
+#### `praxis wiki serve`
+Starts a local HTTP server to browse the wiki.
+
+```bash
+praxis wiki serve --port 8080 --wiki-dir wiki/
+```
+
+Serves wiki at `http://localhost:8080` with live markdown rendering.
+
+#### `praxis wiki export`
+Exports wiki for distribution or static site hosting.
+
+```bash
+praxis wiki export --wiki-dir wiki/ --output wiki-dist/ --format markdown
+```
+
+Copies the complete wiki directory structure for deployment.
+
+### Wiki Output Structure
+
+```
+wiki/
+├── index.md                          # Table of contents with layer badges
+├── concepts/
+│   ├── access-control-policy.md      # Individual concept pages
+│   ├── audit-logging.md
+│   └── ...
+├── graph.json                        # Knowledge graph (nodes/edges)
+└── _meta/
+    ├── generation-log.json           # Page metadata and timestamps
+    └── link-map.json                 # Concept link structure
+```
+
+**index.md** lists all concepts with layer badges:
+```markdown
+# Praxis Knowledge Wiki
+
+**42 concepts** across 3 knowledge layers.
+
+## Concepts
+
+- [Access Control Policy](concepts/access-control-policy.md) — `foundation` `institutional` `refinement`
+- [Audit Logging](concepts/audit-logging.md) — `foundation`
+- ...
+```
+
+**Concept pages** include:
+- Distilled markdown content from source chunks
+- `## Sources` section listing contributing documents
+- `## Layer Origins` section showing knowledge layers (foundation/institutional/refinement)
+- [[Wikilinks]] to related concepts
+
+**graph.json** structure:
+```json
+{
+  "nodes": [
+    {"id": "access-control", "label": "Access Control Policy", "layers": [...], "chunk_count": 3}
+  ],
+  "edges": [
+    {"source": "access-control", "target": "audit-logging"}
+  ]
+}
+```
+
+### Incremental Updates
+
+After generation, new refinements automatically flow into the wiki:
+
+```
+Nellie (refinement) → ChromaDB (chunk added) → wiki update → affected pages regenerated → wiki pages re-ingested
+```
+
+The `--no-feedback` flag on generate skips the final re-ingest step if you want to manually validate before updating RAG retrieval.
+
 ## The Flywheel
 
 Refinements compound over time. Each one makes the system smarter.
