@@ -19,6 +19,7 @@ def wiki():
 def generate(output: str, collection: str, chroma_path: str, no_feedback: bool, verbose: bool):
     """Generate wiki from the current knowledge base."""
     import logging
+    import chromadb
     from core.wiki.models import WikiConfig
     from core.wiki.generator import WikiGenerator
     from core.wiki.interlinker import WikiInterlinker
@@ -26,18 +27,15 @@ def generate(output: str, collection: str, chroma_path: str, no_feedback: bool, 
     from core.wiki.graph import KnowledgeGraph
     from core.wiki.feedback import WikiFeedback
 
-    if verbose:
-        logging.basicConfig(level=logging.DEBUG)
-    else:
-        logging.basicConfig(level=logging.INFO)
+    logging.getLogger("praxis").setLevel(logging.DEBUG if verbose else logging.INFO)
+    if not logging.getLogger("praxis").handlers:
+        logging.getLogger("praxis").addHandler(logging.StreamHandler())
 
     config = WikiConfig(
         output_dir=Path(output),
         collection_name=collection,
         chroma_path=chroma_path,
     )
-
-    import chromadb
 
     click.echo(f"Generating wiki from collection '{collection}'...")
     chroma_client = chromadb.PersistentClient(path=chroma_path)
@@ -74,13 +72,18 @@ def generate(output: str, collection: str, chroma_path: str, no_feedback: bool, 
 @click.option("--collection", "-c", default="praxis", help="ChromaDB collection name.")
 @click.option("--chroma-path", default="data/chroma", help="Path to ChromaDB persistent storage.")
 @click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging.")
-def update(output: str, collection: str, chroma_path: str, verbose: bool):
+@click.option("--no-feedback", is_flag=True, help="Skip re-ingesting updated wiki pages into ChromaDB.")
+def update(output: str, collection: str, chroma_path: str, verbose: bool, no_feedback: bool):
     """Regenerate pages affected by new refinements."""
     import logging
+    import chromadb
     from core.wiki.models import WikiConfig
     from core.wiki.incremental import IncrementalUpdater
+    from core.wiki.feedback import WikiFeedback
 
-    logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
+    logging.getLogger("praxis").setLevel(logging.DEBUG if verbose else logging.INFO)
+    if not logging.getLogger("praxis").handlers:
+        logging.getLogger("praxis").addHandler(logging.StreamHandler())
 
     config = WikiConfig(
         output_dir=Path(output),
@@ -88,11 +91,18 @@ def update(output: str, collection: str, chroma_path: str, verbose: bool):
         chroma_path=chroma_path,
     )
 
-    updater = IncrementalUpdater(config, Path(output))
+    chroma_client = chromadb.PersistentClient(path=chroma_path)
+    updater = IncrementalUpdater(config, Path(output), chroma_client=chroma_client)
     updated = updater.update()
 
     if updated:
         click.echo(f"Updated {len(updated)} pages: {', '.join(updated)}")
+        if not no_feedback:
+            click.echo("Re-ingesting updated pages into ChromaDB...")
+            fb = WikiFeedback(config, chroma_client=chroma_client)
+            existing = updater._load_existing_pages()
+            fb.ingest_pages(existing)
+            fb.remove_stale([p.slug for p in existing])
     else:
         click.echo("Wiki is up to date — no changes detected.")
 

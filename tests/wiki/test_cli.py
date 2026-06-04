@@ -36,6 +36,13 @@ class TestCLIHelp:
         assert "--format" in result.output
 
 
+class TestServeCommand:
+    def test_serve_missing_wiki_dir(self, runner):
+        result = runner.invoke(wiki, ["serve", "--wiki-dir", "/nonexistent"])
+        assert "not found" in result.output
+        assert result.exit_code == 0
+
+
 class TestExportCommand:
     def test_export_missing_wiki_dir(self, runner):
         result = runner.invoke(wiki, ["export", "--wiki-dir", "/nonexistent"])

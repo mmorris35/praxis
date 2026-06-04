@@ -57,7 +57,7 @@ class WikiGenerator:
                 include=["documents", "metadatas"],
             )
             for i, doc_id in enumerate(results["ids"]):
-                meta = results["metadatas"][i] if results["metadatas"] else {}
+                meta = (results["metadatas"][i] or {}) if results["metadatas"] else {}
                 all_chunks.append({
                     "id": doc_id,
                     "text": results["documents"][i],
@@ -84,7 +84,7 @@ class WikiGenerator:
                 slug=slugify(title, max_length=60),
                 chunk_ids=[c["id"] for c in group_chunks],
                 chunks=group_chunks,
-                layer_sources=list(set(c.get("layer", "foundation") for c in group_chunks)),
+                layer_sources=sorted(set(c.get("layer", "foundation") for c in group_chunks)),
             )
             clusters.append(cluster)
 
@@ -132,7 +132,7 @@ Source chunks:
             slug=cluster.slug,
             title=cluster.concept_name,
             content=content,
-            sources=list(set(c.get("source", "") for c in cluster.chunks)),
+            sources=sorted(set(c.get("source", "") for c in cluster.chunks)),
             layers=cluster.layer_sources,
             chunk_ids=cluster.chunk_ids,
             generation_timestamp=datetime.now(timezone.utc).isoformat(),

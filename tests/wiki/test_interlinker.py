@@ -89,6 +89,20 @@ class TestAliasCollision:
         assert index["access control"] == "access-control"
 
 
+class TestSubstringProtection:
+    def test_no_nested_wikilinks(self):
+        pages = [
+            WikiPage(slug="access-control", title="Access Control", content="# AC\n\nSee access control policy docs."),
+            WikiPage(slug="access-control-policy", title="Access Control Policy", content="# ACP\n\nThe access control rules."),
+        ]
+        linker = WikiInterlinker(pages)
+        linked = linker.interlink_all()
+        ac_page = next(p for p in linked if p.slug == "access-control")
+        assert "[[[" not in ac_page.content
+        acp_page = next(p for p in linked if p.slug == "access-control-policy")
+        assert "[[[" not in acp_page.content
+
+
 class TestNoLinksPage:
     def test_unrelated_page_no_links(self):
         pages = [

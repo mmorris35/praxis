@@ -1,5 +1,6 @@
 """Data models for Wiki Mode."""
 
+import os
 from pathlib import Path
 from typing import Any, Optional
 from pydantic import BaseModel, Field
@@ -12,7 +13,7 @@ class WikiConfig(BaseModel):
     chroma_path: str = Field(default="data/chroma")
     embedding_model: str = Field(default="nomic-embed-text")
     ollama_url: str = Field(default="http://localhost:11434")
-    llm_model: str = Field(default="claude-sonnet-4-20250514")
+    llm_model: str = Field(default_factory=lambda: os.environ.get("PRAXIS_LLM_MODEL", "claude-sonnet-4-20250514"))
     max_chunks_per_page: int = Field(default=10)
 
 

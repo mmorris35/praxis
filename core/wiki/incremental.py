@@ -15,17 +15,22 @@ logger = logging.getLogger("praxis.wiki")
 class IncrementalUpdater:
     """Detects changes in ChromaDB and regenerates only affected wiki pages."""
 
-    def __init__(self, config: WikiConfig, output_dir: Path) -> None:
+    def __init__(self, config: WikiConfig, output_dir: Path, chroma_client: "chromadb.ClientAPI | None" = None) -> None:
         self.config = config
         self.output_dir = output_dir
-        self.generator = WikiGenerator(config)
+        self.generator = WikiGenerator(config, chroma_client=chroma_client)
+        self._last_gen: dict | None = None
 
     def _load_last_generation(self) -> dict:
-        """Load the last generation log to compare against."""
+        """Load the last generation log to compare against (cached per instance)."""
+        if self._last_gen is not None:
+            return self._last_gen
         log_path = self.output_dir / "_meta" / "generation-log.json"
         if not log_path.exists():
-            return {"pages": []}
-        return json.loads(log_path.read_text(encoding="utf-8"))
+            self._last_gen = {"pages": []}
+        else:
+            self._last_gen = json.loads(log_path.read_text(encoding="utf-8"))
+        return self._last_gen
 
     def _load_existing_pages(self) -> list[WikiPage]:
         """Load existing wiki pages from disk."""

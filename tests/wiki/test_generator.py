@@ -16,6 +16,7 @@ def sample_chunks():
         {"id": "c2", "text": "AC-1 must be reviewed annually.", "source": "800-171", "control_id": "AC-1", "control_title": "Access Control Policy", "layer": "foundation"},
         {"id": "c3", "text": "Audit logs must be retained 90 days.", "source": "800-171", "control_id": "AU-1", "control_title": "Audit and Accountability", "layer": "foundation"},
         {"id": "c4", "text": "Refinement: AC-1 also requires FIDO2 keys for admin access.", "source": "refinement", "control_id": "AC-1", "control_title": "Access Control Policy", "layer": "refinement"},
+        {"id": "c5", "text": "Institutional guidance: AU-1 retention extended to 1 year for FedRAMP.", "source": "institutional", "control_id": "AU-1", "control_title": "Audit and Accountability", "layer": "institutional"},
     ]
 
 
@@ -39,6 +40,8 @@ class TestConceptClustering:
         ac_cluster = next(c for c in clusters if c.slug == "access-control-policy")
         assert "foundation" in ac_cluster.layer_sources
         assert "refinement" in ac_cluster.layer_sources
+        au_cluster = next(c for c in clusters if c.slug == "audit-and-accountability")
+        assert "institutional" in au_cluster.layer_sources
 
     def test_cluster_collects_chunk_ids(self, config, sample_chunks):
         gen = WikiGenerator(config)
@@ -63,7 +66,9 @@ class TestWikiWriter:
         page = WikiPage(slug="test-page", title="Test Page", content="# Test\n\nHello.", sources=["s1"], layers=["foundation"])
         path = writer.write_page(page)
         assert path.exists()
-        assert path.read_text() == "# Test\n\nHello."
+        content = path.read_text()
+        assert "---\ntitle: Test Page\nlayers: [foundation]\n---" in content
+        assert "# Test\n\nHello." in content
 
     def test_write_index(self, tmp_path):
         writer = WikiWriter(tmp_path / "wiki")

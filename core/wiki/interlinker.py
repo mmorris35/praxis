@@ -78,7 +78,10 @@ class WikiInterlinker:
                     continue
                 if pattern.search(text):
                     target_title = self._slug_to_title.get(target_slug, term)
-                    segments[idx] = (pattern.sub(f"[[{target_title}]]", text, count=1), False)
+                    new_text = pattern.sub(f"[[{target_title}]]", text, count=1)
+                    parts = re.split(r"(\[\[.*?\]\])", new_text)
+                    new_segs = [(p, p.startswith("[[")) for p in parts if p]
+                    segments[idx:idx+1] = new_segs
                     matched = True
                     break
             if matched:

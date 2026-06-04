@@ -21,8 +21,11 @@ class WikiWriter:
     def write_page(self, page: WikiPage) -> Path:
         """Write a single wiki page to concepts/<slug>.md."""
         self._ensure_dirs()
-        path = self.concepts_dir / f"{page.slug}.md"
-        path.write_text(page.content, encoding="utf-8")
+        path = (self.concepts_dir / f"{page.slug}.md").resolve()
+        if not path.is_relative_to(self.concepts_dir.resolve()):
+            raise ValueError(f"Slug {page.slug!r} resolves outside concepts directory")
+        frontmatter = f"---\ntitle: {page.title}\nlayers: [{', '.join(page.layers)}]\n---\n\n"
+        path.write_text(frontmatter + page.content, encoding="utf-8")
         return path
 
     def write_index(self, pages: list[WikiPage]) -> Path:
