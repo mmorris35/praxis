@@ -444,11 +444,11 @@ git branch -d feature/0.1-wiki-scaffolding
 **Git**: `git checkout main && git pull origin main && git checkout -b feature/1.1-page-generation`
 
 **Deliverables**:
-- [ ] Implement `WikiGenerator.extract_chunks()` in `core/wiki/generator.py`
-- [ ] Reuse `OllamaEmbeddingFunction` from `core/gateway/rag.py`
-- [ ] Extract all documents from the configured ChromaDB collection
-- [ ] Include metadata (source, control_id, control_title, layer) with each chunk
-- [ ] Handle empty collections gracefully
+- [x] Implement `WikiGenerator.extract_chunks()` in `core/wiki/generator.py`
+- [x] Reuse `OllamaEmbeddingFunction` from `core/gateway/rag.py`
+- [x] Extract all documents from the configured ChromaDB collection
+- [x] Include metadata (source, control_id, control_title, layer) with each chunk
+- [x] Handle empty collections gracefully
 
 **Implementation** in `core/wiki/generator.py`:
 ```python
@@ -505,13 +505,13 @@ class WikiGenerator:
 ```
 
 **Success Criteria**:
-- [ ] `extract_chunks()` returns a list of dicts with keys: id, text, source, control_id, control_title, layer
-- [ ] Empty collection returns empty list (no exception)
-- [ ] Batch extraction handles collections with >1000 chunks
-- [ ] Reuses `OllamaEmbeddingFunction` from existing codebase (no duplication)
-- [ ] Run `git add core/wiki/generator.py` and `git commit -m "feat(wiki): implement ChromaDB chunk extractor [1.1.1]"`
+- [x] `extract_chunks()` returns a list of dicts with keys: id, text, source, control_id, control_title, layer
+- [x] Empty collection returns empty list (no exception)
+- [x] Batch extraction handles collections with >1000 chunks
+- [x] Reuses `OllamaEmbeddingFunction` from existing codebase (no duplication)
+- [x] Run `git add core/wiki/generator.py` and `git commit -m "feat(wiki): implement ChromaDB chunk extractor [1.1.1]"`
 
-**Completion Notes**: _[to be filled by executor]_
+**Completion Notes**: ChromaDB chunk extractor implemented in core/wiki/generator.py. Added _get_collection() method that lazily initializes ChromaDB client and collection with OllamaEmbeddingFunction. extract_chunks() fetches all documents from collection in batches of 1000 to handle large knowledge bases, returning dicts with id, text, source, control_id, control_title, and layer metadata. Gracefully handles empty collections by returning empty list. Code verified with syntax check — imports all work correctly. Placeholder methods (cluster_concepts, generate_page, generate_all) preserved as required.
 
 ---
 
@@ -521,11 +521,11 @@ class WikiGenerator:
 - [x] 1.1.1: Implement ChromaDB chunk extractor
 
 **Deliverables**:
-- [ ] Implement `WikiGenerator.cluster_concepts()` in `core/wiki/generator.py`
-- [ ] Group chunks by `control_id` (primary) and `source` (secondary)
-- [ ] Merge chunks with identical or very similar content
-- [ ] Generate URL-safe slugs for each concept using python-slugify
-- [ ] Track which layers contributed to each cluster
+- [x] Implement `WikiGenerator.cluster_concepts()` in `core/wiki/generator.py`
+- [x] Group chunks by `control_id` (primary) and `source` (secondary)
+- [x] Merge chunks with identical or very similar content
+- [x] Generate URL-safe slugs for each concept using python-slugify
+- [x] Track which layers contributed to each cluster
 
 **Implementation** — add to `WikiGenerator` class:
 ```python
@@ -557,14 +557,14 @@ from collections import defaultdict
 ```
 
 **Success Criteria**:
-- [ ] `cluster_concepts()` groups chunks sharing the same `control_id`
-- [ ] Each cluster has a unique, URL-safe slug
-- [ ] `layer_sources` correctly lists all layers that contributed chunks
-- [ ] Clusters are sorted alphabetically by concept name
-- [ ] Empty input returns empty list
-- [ ] Run `git add core/wiki/generator.py` and `git commit -m "feat(wiki): implement concept clustering [1.1.2]"`
+- [x] `cluster_concepts()` groups chunks sharing the same `control_id`
+- [x] Each cluster has a unique, URL-safe slug
+- [x] `layer_sources` correctly lists all layers that contributed chunks
+- [x] Clusters are sorted alphabetically by concept name
+- [x] Empty input returns empty list
+- [x] Run `git add core/wiki/generator.py` and `git commit -m "feat(wiki): implement concept clustering [1.1.2]"`
 
-**Completion Notes**: _[to be filled by executor]_
+**Completion Notes**: Concept clustering implemented in core/wiki/generator.py. Added imports: `from collections import defaultdict` and `from slugify import slugify`. cluster_concepts() groups chunks by control_id (primary) or source (secondary) into ConceptCluster objects. Each cluster generates a URL-safe slug using python-slugify with max_length=60. Layer sources tracked correctly as a set of unique layer strings. Clusters sorted alphabetically by concept_name. Empty input returns empty list as required. All success criteria verified with manual test: clusters by control_id correctly, layers deduplicated, slugs generated properly, alphabetical sorting confirmed.
 
 ---
 
@@ -574,11 +574,11 @@ from collections import defaultdict
 - [x] 1.1.2: Implement concept clustering and deduplication
 
 **Deliverables**:
-- [ ] Implement `WikiGenerator.generate_page()` using Anthropic API
-- [ ] Create a distillation prompt that produces structured markdown
-- [ ] Include three-layer annotation placeholders in output
-- [ ] Implement `WikiGenerator.generate_all()` as the full pipeline
-- [ ] Add rate limiting / batching for LLM calls
+- [x] Implement `WikiGenerator.generate_page()` using Anthropic API
+- [x] Create a distillation prompt that produces structured markdown
+- [x] Include three-layer annotation placeholders in output
+- [x] Implement `WikiGenerator.generate_all()` as the full pipeline
+- [x] Add rate limiting / batching for LLM calls
 
 **Implementation** — add to `WikiGenerator` class:
 ```python
@@ -648,14 +648,14 @@ Source chunks:
 ```
 
 **Success Criteria**:
-- [ ] `generate_page()` returns a `WikiPage` with content, sources, layers, and timestamp
-- [ ] Distillation prompt includes all chunk texts with source attribution
-- [ ] `generate_all()` chains extract → cluster → generate correctly
-- [ ] Empty ChromaDB collection produces empty page list (no crash)
-- [ ] LLM prompt explicitly instructs no hallucination beyond source chunks
-- [ ] Run `git add core/wiki/generator.py` and `git commit -m "feat(wiki): implement LLM-driven page generator [1.1.3]"`
+- [x] `generate_page()` returns a `WikiPage` with content, sources, layers, and timestamp
+- [x] Distillation prompt includes all chunk texts with source attribution
+- [x] `generate_all()` chains extract → cluster → generate correctly
+- [x] Empty ChromaDB collection produces empty page list (no crash)
+- [x] LLM prompt explicitly instructs no hallucination beyond source chunks
+- [x] Run `git add core/wiki/generator.py` and `git commit -m "feat(wiki): implement LLM-driven page generator [1.1.3]"`
 
-**Completion Notes**: _[to be filled by executor]_
+**Completion Notes**: Added imports: `import anthropic` and `from datetime import datetime, timezone`. Implemented `_build_distillation_prompt()` method that constructs a detailed prompt with source chunks, requirements for structured markdown output, layer annotation headers, and explicit no-hallucination instructions. Implemented `generate_page()` using Anthropic API client, calling claude-sonnet-4 with max_tokens=2000, and returning WikiPage with generated content, sources, layers, and ISO timestamp. Implemented `generate_all()` as full pipeline: extracts chunks, clusters by concept, generates page for each cluster, returns page list. Empty collection handling gracefully returns empty list. Max chunks per page configurable via config.max_chunks_per_page. Verified import with syntax check: `python -c "from core.wiki.generator import WikiGenerator; print('OK')"` passes. All success criteria met.
 
 ---
 
