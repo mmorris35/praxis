@@ -119,7 +119,7 @@ def serve(port: int, wiki_dir: str):
 
 
 @wiki.command(name="export")
-@click.option("--format", "fmt", default="markdown", type=click.Choice(["html", "markdown"]), help="Export format.")
+@click.option("--format", "fmt", default="markdown", type=click.Choice(["markdown"]), help="Export format.")
 @click.option("--output", "-o", default="wiki-export", help="Export output directory.")
 @click.option("--wiki-dir", default="wiki", help="Source wiki directory.")
 def export_wiki(fmt: str, output: str, wiki_dir: str):
@@ -131,7 +131,10 @@ def export_wiki(fmt: str, output: str, wiki_dir: str):
         click.echo(f"Wiki directory '{wiki_dir}' not found. Run 'praxis wiki generate' first.")
         return
 
-    dst = Path(output)
+    dst = Path(output).resolve()
+    if dst == Path.home() or dst == Path("/") or dst.parent == Path("/"):
+        click.echo(f"Refusing to export to '{output}' — path is too broad. Use a subdirectory.")
+        return
     if dst.exists():
         shutil.rmtree(dst)
     shutil.copytree(src, dst)

@@ -21,7 +21,7 @@ class WikiInterlinker:
             self._concept_index[page.title.lower()] = page.slug
             words = page.title.split()
             if len(words) > 2:
-                self._concept_index[page.title.lower().rstrip("policy").strip()] = page.slug
+                self._concept_index[page.title.lower().removesuffix(" policy").strip()] = page.slug
         return self._concept_index
 
     def inject_links(self, page: WikiPage) -> WikiPage:

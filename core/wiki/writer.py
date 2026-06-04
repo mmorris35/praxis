@@ -53,6 +53,7 @@ class WikiWriter:
                     "title": p.title,
                     "sources": p.sources,
                     "layers": p.layers,
+                    "chunk_ids": p.chunk_ids,
                     "chunk_count": len(p.chunk_ids),
                     "timestamp": p.generation_timestamp,
                 }
