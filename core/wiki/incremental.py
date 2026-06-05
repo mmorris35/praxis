@@ -2,6 +2,7 @@
 
 import json
 import logging
+import re
 from pathlib import Path
 from core.wiki.models import WikiConfig, WikiPage
 from core.wiki.generator import WikiGenerator
@@ -32,6 +33,11 @@ class IncrementalUpdater:
             self._last_gen = json.loads(log_path.read_text(encoding="utf-8"))
         return self._last_gen
 
+    @staticmethod
+    def _strip_frontmatter(text: str) -> str:
+        """Remove YAML frontmatter (---...---) from the start of a file."""
+        return re.sub(r"\A---\n.*?\n---\n\n?", "", text, count=1, flags=re.DOTALL)
+
     def _load_existing_pages(self) -> list[WikiPage]:
         """Load existing wiki pages from disk."""
         pages = []
@@ -43,10 +49,11 @@ class IncrementalUpdater:
         for md_file in concepts_dir.glob("*.md"):
             slug = md_file.stem
             meta = meta_by_slug.get(slug, {})
+            raw = md_file.read_text(encoding="utf-8")
             pages.append(WikiPage(
                 slug=slug,
                 title=meta.get("title", slug),
-                content=md_file.read_text(encoding="utf-8"),
+                content=self._strip_frontmatter(raw),
                 sources=meta.get("sources", []),
                 layers=meta.get("layers", []),
                 chunk_ids=meta.get("chunk_ids", []),

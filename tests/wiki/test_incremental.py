@@ -119,6 +119,36 @@ class TestChangeDetection:
             assert changes["deleted_chunks"] == 2
 
 
+class TestFrontmatterStripping:
+    def test_strip_frontmatter(self):
+        text = '---\ntitle: "Test"\nlayers: [foundation]\n---\n\n# Test\nContent.'
+        assert IncrementalUpdater._strip_frontmatter(text) == "# Test\nContent."
+
+    def test_strip_frontmatter_no_frontmatter(self):
+        text = "# Test\nContent."
+        assert IncrementalUpdater._strip_frontmatter(text) == "# Test\nContent."
+
+    def test_no_double_frontmatter_on_reload(self, config, tmp_path):
+        from core.wiki.writer import WikiWriter
+        from core.wiki.models import WikiPage
+        writer = WikiWriter(tmp_path)
+        page = WikiPage(slug="test", title="Test", content="# Test\nBody.", layers=["foundation"])
+        writer.write_page(page)
+        updater = IncrementalUpdater(config, tmp_path)
+        meta_dir = tmp_path / "_meta"
+        meta_dir.mkdir(exist_ok=True)
+        import json
+        (meta_dir / "generation-log.json").write_text(json.dumps({
+            "pages": [{"slug": "test", "title": "Test", "chunk_ids": [], "sources": [], "layers": ["foundation"]}]
+        }))
+        loaded = updater._load_existing_pages()
+        assert len(loaded) == 1
+        assert not loaded[0].content.startswith("---")
+        writer.write_page(loaded[0])
+        final = (tmp_path / "concepts" / "test.md").read_text()
+        assert final.count("---") == 2
+
+
 class TestIncrementalUpdate:
     def test_update_returns_updated_slugs(self, config, wiki_dir):
         updater = IncrementalUpdater(config, wiki_dir)

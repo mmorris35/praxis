@@ -29,6 +29,7 @@ class TestCLIHelp:
     def test_update_help(self, runner):
         result = runner.invoke(wiki, ["update", "--help"])
         assert result.exit_code == 0
+        assert "--no-feedback" in result.output
 
     def test_export_help(self, runner):
         result = runner.invoke(wiki, ["export", "--help"])

@@ -67,7 +67,7 @@ class TestWikiWriter:
         path = writer.write_page(page)
         assert path.exists()
         content = path.read_text()
-        assert "---\ntitle: Test Page\nlayers: [foundation]\n---" in content
+        assert '---\ntitle: "Test Page"\nlayers: [foundation]\n---' in content
         assert "# Test\n\nHello." in content
 
     def test_write_index(self, tmp_path):

@@ -24,7 +24,8 @@ class WikiWriter:
         path = (self.concepts_dir / f"{page.slug}.md").resolve()
         if not path.is_relative_to(self.concepts_dir.resolve()):
             raise ValueError(f"Slug {page.slug!r} resolves outside concepts directory")
-        frontmatter = f"---\ntitle: {page.title}\nlayers: [{', '.join(page.layers)}]\n---\n\n"
+        safe_title = page.title.replace('"', '\\"')
+        frontmatter = f'---\ntitle: "{safe_title}"\nlayers: [{", ".join(page.layers)}]\n---\n\n'
         path.write_text(frontmatter + page.content, encoding="utf-8")
         return path
 
