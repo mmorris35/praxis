@@ -25,6 +25,9 @@ build/
 *.pem
 *.key
 
+# Generated wiki output (regenerate via `praxis wiki generate`)
+/wiki/
+
 # Data (large files, regenerate via ingest)
 data/chroma/
 # Ignore PDFs in data/pdfs (regenerate via download)
