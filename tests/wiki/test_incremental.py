@@ -68,7 +68,7 @@ class TestChangeDetection:
                 ]
                 changes = updater.detect_changes()
                 assert changes["deleted_chunks"] == 1
-                assert changes["affected_slugs"] == []
+                assert "audit-logging" in changes["affected_slugs"]
 
     def test_no_changes_detected(self, config, wiki_dir):
         updater = IncrementalUpdater(config, wiki_dir)
@@ -175,6 +175,27 @@ class TestIncrementalUpdate:
                     assert page_file.exists()
                     assert (wiki_dir / "index.md").exists()
                     assert (wiki_dir / "graph.json").exists()
+
+    def test_update_removes_orphaned_pages(self, config, wiki_dir):
+        updater = IncrementalUpdater(config, wiki_dir)
+        remaining_chunks = [
+            {"id": "c1", "text": "t1", "source": "s", "control_id": "AC-1", "control_title": "Access Control", "layer": "foundation"},
+            {"id": "c2", "text": "t2", "source": "s", "control_id": "AC-1", "control_title": "Access Control", "layer": "foundation"},
+        ]
+        mock_page = WikiPage(
+            slug="access-control", title="Access Control",
+            content="# Access Control\nRegenerated.", layers=["foundation"], chunk_ids=["c1", "c2"],
+        )
+        with patch.object(updater.generator, "extract_chunks", return_value=remaining_chunks):
+            with patch.object(updater.generator, "cluster_concepts") as mock_cluster:
+                with patch.object(updater.generator, "generate_page", return_value=mock_page):
+                    mock_cluster.return_value = [
+                        MagicMock(slug="access-control", chunk_ids=["c1", "c2"]),
+                    ]
+                    updated = updater.update()
+                    assert not (wiki_dir / "concepts" / "audit-logging.md").exists()
+                    index_content = (wiki_dir / "index.md").read_text()
+                    assert "audit-logging" not in index_content
 
     def test_update_no_changes(self, config, wiki_dir):
         updater = IncrementalUpdater(config, wiki_dir)

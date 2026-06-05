@@ -82,8 +82,14 @@ class IncrementalUpdater:
         clusters = self.generator.cluster_concepts(chunks)
         for cluster in clusters:
             cluster_ids = set(cluster.chunk_ids)
-            if cluster_ids & (new_ids | deleted_ids):
+            if cluster_ids & new_ids:
                 affected_slugs.add(cluster.slug)
+
+        if deleted_ids:
+            for page_meta in last_gen.get("pages", []):
+                old_chunk_ids = set(page_meta.get("chunk_ids", []))
+                if old_chunk_ids & deleted_ids:
+                    affected_slugs.add(page_meta["slug"])
 
         return {
             "new_chunks": len(new_ids),
@@ -106,7 +112,16 @@ class IncrementalUpdater:
         logger.info(f"Regenerating {len(changes['affected_slugs'])} affected pages")
 
         clusters = changes["clusters"]
-        affected = [c for c in clusters if c.slug in changes["affected_slugs"]]
+        affected_set = set(changes["affected_slugs"])
+        affected = [c for c in clusters if c.slug in affected_set]
+
+        cluster_slugs = {c.slug for c in clusters}
+        orphaned_slugs = affected_set - cluster_slugs
+        for slug in orphaned_slugs:
+            orphan_path = self.output_dir / "concepts" / f"{slug}.md"
+            if orphan_path.exists():
+                orphan_path.unlink()
+                logger.info(f"Removed orphaned page: {slug}")
 
         new_pages = {}
         for cluster in affected:
@@ -114,6 +129,7 @@ class IncrementalUpdater:
             new_pages[page.slug] = page
 
         all_pages = self._load_existing_pages()
+        all_pages = [p for p in all_pages if p.slug not in orphaned_slugs]
         all_pages = [new_pages.get(p.slug, p) for p in all_pages]
         for slug, page in new_pages.items():
             if not any(p.slug == slug for p in all_pages):

@@ -59,6 +59,18 @@ class TestConceptClustering:
         names = [c.concept_name for c in clusters]
         assert names == sorted(names)
 
+    def test_slug_collision_deduplicates(self, config):
+        gen = WikiGenerator(config)
+        chunks = [
+            {"id": "c1", "text": "t1", "source": "s1", "control_id": "X-1", "control_title": "Shared Title", "layer": "foundation"},
+            {"id": "c2", "text": "t2", "source": "s2", "control_id": "X-2", "control_title": "Shared Title", "layer": "foundation"},
+        ]
+        clusters = gen.cluster_concepts(chunks)
+        slugs = [c.slug for c in clusters]
+        assert len(slugs) == len(set(slugs))
+        assert slugs[0] == "shared-title"
+        assert slugs[1] == "shared-title-2"
+
 
 class TestWikiWriter:
     def test_write_page(self, tmp_path):

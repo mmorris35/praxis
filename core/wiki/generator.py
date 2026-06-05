@@ -89,6 +89,18 @@ class WikiGenerator:
             clusters.append(cluster)
 
         clusters.sort(key=lambda c: c.concept_name)
+
+        seen_slugs: set[str] = set()
+        for cluster in clusters:
+            original = cluster.slug
+            counter = 2
+            while cluster.slug in seen_slugs:
+                cluster.slug = f"{original}-{counter}"
+                counter += 1
+            if cluster.slug != original:
+                logger.warning(f"Slug collision: '{original}' renamed to '{cluster.slug}'")
+            seen_slugs.add(cluster.slug)
+
         return clusters
 
     def _build_distillation_prompt(self, cluster: ConceptCluster) -> str:
