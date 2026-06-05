@@ -117,8 +117,12 @@ class IncrementalUpdater:
 
         cluster_slugs = {c.slug for c in clusters}
         orphaned_slugs = affected_set - cluster_slugs
+        concepts_dir = self.output_dir / "concepts"
         for slug in orphaned_slugs:
-            orphan_path = self.output_dir / "concepts" / f"{slug}.md"
+            orphan_path = (concepts_dir / f"{slug}.md").resolve()
+            if not orphan_path.is_relative_to(concepts_dir.resolve()):
+                logger.warning(f"Refusing to delete orphan outside concepts dir: {slug!r}")
+                continue
             if orphan_path.exists():
                 orphan_path.unlink()
                 logger.info(f"Removed orphaned page: {slug}")
@@ -143,6 +147,8 @@ class IncrementalUpdater:
 
         graph = KnowledgeGraph(all_pages)
         graph.write(self.output_dir)
+
+        self._last_gen = None
 
         updated_slugs = list(new_pages.keys())
         logger.info(f"Updated {len(updated_slugs)} pages, re-interlinked all, rebuilt graph")
