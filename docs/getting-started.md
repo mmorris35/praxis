@@ -67,3 +67,57 @@ uvicorn core.gateway.main:app --port 8081
 6. **Enable refinements**
    - Configure Nellie connection
    - Let real usage improve the system
+
+## Connect a Coding Agent
+
+Praxis exposes its knowledge base as an MCP server, so coding agents (Claude
+Code, Cursor, etc.) can query grounded documentation instead of guessing at
+API syntax.
+
+### Local (stdio) — for a single editor
+
+Start the MCP server as a subprocess of your editor:
+
+```json
+// .mcp.json (Claude Code) or equivalent
+{
+  "mcpServers": {
+    "praxis": { "command": "praxis", "args": ["mcp", "stdio"] }
+  }
+}
+```
+
+### Shared instance (streamable-HTTP) — for a team
+
+Run the server on a shared host:
+
+```bash
+praxis mcp http --port 8790
+```
+
+Then configure each editor to connect:
+
+```json
+{
+  "mcpServers": {
+    "praxis": { "type": "streamableHttp", "url": "http://your-host:8790/mcp" }
+  }
+}
+```
+
+### Available tools
+
+- **`knowledge_search`** — Search the knowledge base. Returns ranked context
+  passages with source attribution. Use this for compliance controls, API syntax,
+  domain-specific documentation, and anything else indexed in Praxis.
+  - `query` (str): Natural language search query.
+  - `top_k` (int, optional): Number of results (1-25, default 10).
+
+- **`list_domains`** — List the configured knowledge domain(s) so the agent
+  knows what corpora are available.
+
+### Note on transports
+
+Praxis MCP supports **stdio** and **streamable-HTTP** only. SSE transport is
+intentionally excluded due to connection stability issues in long-running agent
+sessions.
