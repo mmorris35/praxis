@@ -1,4 +1,4 @@
-# praxis-wiki-mode — Development Plan
+# Praxis — Development Plan
 
 ## How to Use This Plan
 
@@ -6,14 +6,14 @@
 
 ## Project Overview
 
-**Project Name**: praxis-wiki-mode
-**Goal**: Add a Wiki Mode to Praxis that auto-generates structured, interlinked markdown wiki pages from the three-layer knowledge base (Foundation, Institutional, Refinements), making knowledge browsable and discoverable without querying.
-**Target Users**: Praxis users who want to browse/discover knowledge, new team members onboarding, developers doing gap analysis on what Praxis knows.
-**Timeline**: 2 weeks
+**Project Name**: Praxis
+**Goal**: Expert system platform with RAG, AMP, Wiki Mode, and MCP Server — making domain knowledge browsable, discoverable, and programmatically accessible to both humans and coding agents.
+**Target Users**: Praxis users browsing/discovering knowledge, new team members onboarding, developers doing gap analysis, and **coding agents** (Claude Code, Cursor) that need grounded documentation mid-task.
+**Timeline**: Wiki Mode: 2 weeks | MCP Server: 3-4 days
 
-**Existing Codebase**: Praxis is a FastAPI gateway with ChromaDB RAG (`core/gateway/rag.py`), Ollama embeddings (`nomic-embed-text`), and AMP integration (`core/gateway/amp.py`) for institutional knowledge. Wiki Mode adds a new `core/wiki/` module and CLI entry point.
+**Existing Codebase**: Praxis is a FastAPI gateway with ChromaDB RAG (`core/gateway/rag.py`), Ollama embeddings (`nomic-embed-text`), and AMP integration (`core/gateway/amp.py`) for institutional knowledge. Wiki Mode adds `core/wiki/`, and the MCP Server adds `core/mcp/` — both with CLI entry points.
 
-**MVP Scope**:
+**MVP Scope — Wiki Mode (Phases 0-4)**:
 - [ ] Agent-driven wiki page generation from ChromaDB knowledge chunks
 - [ ] Automatic interlinking with [[wikilinks]] across concept pages
 - [ ] Three-layer visibility annotations (Foundation/Institutional/Refinement)
@@ -22,12 +22,22 @@
 - [ ] Bidirectional RAG integration — wiki pages feed back into ChromaDB
 - [ ] CLI commands: praxis wiki generate/update/serve/export
 
+**MVP Scope — MCP Server Frontend (Phase 5)**:
+- [ ] FastMCP server exposing `knowledge_search` tool over existing RAG layer
+- [ ] Reuses `gateway/rag.py` (retrieve/format_context/extract_sources) verbatim
+- [ ] stdio transport for local editors (Claude Code)
+- [ ] streamable-HTTP transport for shared instances
+- [ ] **No SSE** — fleet stability constraint
+- [ ] CLI commands: praxis mcp stdio / praxis mcp http --port
+- [ ] Single new dependency: `fastmcp==3.4.3`
+- [ ] Documentation: "Connect a coding agent" section in getting-started.md
+
 ---
 
 ## Technology Stack
 
 - **Language**: Python 3.11+
-- **Framework**: FastAPI (existing), Click (new CLI)
+- **Framework**: FastAPI (existing), Click (CLI), FastMCP (MCP server)
 - **RAG**: ChromaDB with Ollama nomic-embed-text embeddings
 - **LLM**: Anthropic Claude (via existing `core/gateway/llm.py`)
 - **Testing**: pytest
@@ -73,8 +83,15 @@
 - [ ] 4.2.1: End-to-end integration tests
 - [ ] 4.2.2: Update README and documentation
 
+### Phase 5: MCP Server Frontend
+- [ ] 5.1.1: Create MCP server module with knowledge_search tool
+- [ ] 5.1.2: Add CLI subcommands (praxis mcp stdio / http)
+- [ ] 5.1.3: Add input validation and security caps
+- [ ] 5.2.1: Write tests for MCP server
+- [ ] 5.2.2: Add "Connect a coding agent" docs to getting-started.md
+
 **Current**: Phase 3 (3.2.3 completed)
-**Next**: Phase 4 (RAG Feedback & CLI Integration)
+**Next**: Phase 4 (RAG Feedback & CLI Integration), then Phase 5 (MCP Server Frontend)
 
 ---
 
@@ -2004,6 +2021,482 @@ git branch -d feature/4.1-rag-cli
 
 ---
 
+## Phase 5: MCP Server Frontend
+
+**Goal**: Expose Praxis's existing RAG retrieval layer as an MCP server so coding agents (Claude Code, Cursor, etc.) can query grounded documentation as a tool — instead of guessing at API syntax.
+**Duration**: 3-4 days
+**Design Spec**: `docs/proposals/mcp-frontend.md` (PR #4)
+**Motivation**: Agents routinely guess at MS Graph `$filter`/`$select` syntax and misreport empty results. Putting authoritative docs in the agent's toolbelt fixes that and generalizes to every Praxis domain (CMMC, mortgage, etc.).
+
+### Task 5.1: MCP Server & CLI
+
+**Subtask 5.1.1: Create MCP server module with knowledge_search tool (Single Session)**
+
+**Prerequisites**:
+- [x] Phase 0-3 complete (core/gateway/rag.py exists with retrieve/format_context/extract_sources)
+
+**Git**: `git checkout main && git pull origin main && git checkout -b feature/5.1-mcp-server`
+
+**Deliverables**:
+- [ ] Create `core/mcp/__init__.py`
+- [ ] Create `core/mcp/server.py` with FastMCP server and `knowledge_search` tool
+- [ ] Tool reuses `gateway.rag.retrieve`, `gateway.rag.format_context`, `gateway.rag.extract_sources` — no new retrieval logic
+- [ ] Add `fastmcp==3.4.3` to `requirements.txt` (exact pin)
+
+**Files to Create**:
+- `core/mcp/__init__.py`:
+```python
+"""Praxis MCP Server — expose RAG retrieval as MCP tools for coding agents."""
+
+__version__ = "0.1.0"
+```
+
+- `core/mcp/server.py`:
+```python
+"""MCP server exposing Praxis RAG as tools for coding agents."""
+
+from fastmcp import FastMCP
+
+mcp = FastMCP(
+    "Praxis",
+    instructions=(
+        "Praxis is an expert-system knowledge base. Use knowledge_search "
+        "to find authoritative documentation, compliance controls, and "
+        "API syntax grounded in indexed sources — not guesses."
+    ),
+)
+
+
+@mcp.tool
+def knowledge_search(query: str, top_k: int = 10) -> dict:
+    """Search the Praxis knowledge base for documentation, controls, and API syntax.
+
+    Returns ranked context passages with source attribution. Use this instead of
+    guessing at API parameters, compliance requirements, or domain-specific syntax.
+
+    Args:
+        query: Natural language search query (e.g. "MS Graph $filter syntax for users").
+        top_k: Number of results to return (1-25, default 10).
+    """
+    from core.gateway.rag import retrieve, format_context, extract_sources
+
+    top_k = max(1, min(top_k, 25))
+
+    if len(query) > 2000:
+        query = query[:2000]
+
+    chunks = retrieve(query, top_k=top_k)
+
+    if not chunks:
+        return {
+            "context": "No relevant results found for this query.",
+            "sources": [],
+        }
+
+    return {
+        "context": format_context(chunks),
+        "sources": extract_sources(chunks),
+    }
+
+
+@mcp.tool
+def list_domains() -> dict:
+    """List the knowledge domains available in this Praxis instance.
+
+    Returns the configured ChromaDB collection(s) so the agent knows what
+    corpora are available for querying.
+    """
+    from core.gateway.rag import _load_config
+
+    cfg = _load_config()["rag"]
+    return {
+        "collection": cfg.get("collection", "praxis"),
+        "chroma_path": cfg.get("chroma_path", "data/chroma"),
+    }
+```
+
+**Files to Modify**:
+- `requirements.txt` — append:
+```
+# MCP Server
+fastmcp==3.4.3
+```
+
+**Success Criteria**:
+- [ ] `python -c "from core.mcp.server import mcp; print(mcp.name)"` prints "Praxis"
+- [ ] `python -c "from core.mcp.server import knowledge_search; print(knowledge_search.__name__)"` prints "knowledge_search"
+- [ ] `pip install -r requirements.txt` completes with exit code 0
+- [ ] `python -c "import fastmcp; print(fastmcp.__version__)"` prints "3.4.3"
+- [ ] `grep -c 'fastmcp==3.4.3' requirements.txt` returns 1
+- [ ] No retrieval logic duplicated — server imports from `core.gateway.rag`
+- [ ] Run `git add core/mcp/ requirements.txt` and `git commit -m "feat(mcp): add FastMCP server with knowledge_search tool [5.1.1]"`
+
+**Completion Notes**: _[to be filled by executor]_
+
+---
+
+**Subtask 5.1.2: Add CLI subcommands for MCP server (Single Session)**
+
+**Prerequisites**:
+- [x] 5.1.1: Create MCP server module with knowledge_search tool
+
+**Deliverables**:
+- [ ] Add `mcp` command group to `praxis_cli.py`
+- [ ] Add `praxis mcp stdio` subcommand (default transport for local editors)
+- [ ] Add `praxis mcp http --port 8790` subcommand (streamable-HTTP for shared instances)
+- [ ] **No SSE transport exposed** — fleet stability constraint
+
+**Files to Create**:
+- `core/mcp/cli.py`:
+```python
+"""CLI commands for Praxis MCP Server."""
+
+import click
+
+
+@click.group()
+def mcp():
+    """MCP Server — expose knowledge base to coding agents."""
+    pass
+
+
+@mcp.command()
+def stdio():
+    """Run MCP server over stdio (for local editors like Claude Code)."""
+    from core.mcp.server import mcp as mcp_server
+
+    click.echo("Starting Praxis MCP server (stdio)...")
+    mcp_server.run(transport="stdio")
+
+
+@mcp.command()
+@click.option("--port", "-p", default=8790, help="Port for streamable-HTTP transport.")
+@click.option("--host", default="0.0.0.0", help="Host to bind to.")
+def http(port: int, host: str):
+    """Run MCP server over streamable-HTTP (for shared instances)."""
+    from core.mcp.server import mcp as mcp_server
+
+    click.echo(f"Starting Praxis MCP server (streamable-HTTP) on {host}:{port}...")
+    mcp_server.run(transport="streamable-http", host=host, port=port)
+```
+
+**Files to Modify**:
+- `praxis_cli.py` — add mcp import and registration:
+```python
+"""Praxis CLI — entry point for all Praxis commands."""
+
+import click
+from core.wiki.cli import wiki
+from core.mcp.cli import mcp
+
+
+@click.group()
+@click.version_option(version="0.1.0", prog_name="praxis")
+def cli():
+    """Praxis — Expert system platform with RAG, AMP, Wiki Mode, and MCP Server."""
+    pass
+
+
+cli.add_command(wiki)
+cli.add_command(mcp)
+
+
+if __name__ == "__main__":
+    cli()
+```
+
+**Success Criteria**:
+- [ ] `python praxis_cli.py mcp --help` shows mcp subcommands (stdio, http)
+- [ ] `python praxis_cli.py mcp stdio --help` shows stdio command
+- [ ] `python praxis_cli.py mcp http --help` shows http options (--port, --host)
+- [ ] No SSE transport is available in the CLI
+- [ ] All `--help` commands exit with code 0
+- [ ] Run `git add core/mcp/cli.py praxis_cli.py` and `git commit -m "feat(mcp): add CLI subcommands for stdio and streamable-HTTP [5.1.2]"`
+
+**Completion Notes**: _[to be filled by executor]_
+
+---
+
+**Subtask 5.1.3: Add input validation and security caps (Single Session)**
+
+**Prerequisites**:
+- [x] 5.1.2: Add CLI subcommands for MCP server
+
+**Deliverables**:
+- [ ] Enforce `top_k` cap (max 25) in `knowledge_search`
+- [ ] Enforce query length cap (max 2000 chars) in `knowledge_search`
+- [ ] Verify no raw queries are logged to the gateway security log path
+- [ ] Add basic error handling for ChromaDB connection failures
+
+**Files to Modify**:
+- `core/mcp/server.py` — update `knowledge_search` with error handling:
+```python
+@mcp.tool
+def knowledge_search(query: str, top_k: int = 10) -> dict:
+    """Search the Praxis knowledge base for documentation, controls, and API syntax.
+
+    Returns ranked context passages with source attribution. Use this instead of
+    guessing at API parameters, compliance requirements, or domain-specific syntax.
+
+    Args:
+        query: Natural language search query (e.g. "MS Graph $filter syntax for users").
+        top_k: Number of results to return (1-25, default 10).
+    """
+    from core.gateway.rag import retrieve, format_context, extract_sources
+
+    top_k = max(1, min(top_k, 25))
+
+    if len(query) > 2000:
+        query = query[:2000]
+
+    try:
+        chunks = retrieve(query, top_k=top_k)
+    except Exception as e:
+        return {
+            "context": f"Knowledge search failed: {type(e).__name__}",
+            "sources": [],
+            "error": True,
+        }
+
+    if not chunks:
+        return {
+            "context": "No relevant results found for this query.",
+            "sources": [],
+        }
+
+    return {
+        "context": format_context(chunks),
+        "sources": extract_sources(chunks),
+    }
+```
+
+**Success Criteria**:
+- [ ] `top_k` values above 25 are clamped to 25
+- [ ] `top_k` values below 1 are clamped to 1
+- [ ] Queries longer than 2000 chars are truncated
+- [ ] ChromaDB connection failure returns an error dict, not an unhandled exception
+- [ ] No `import logging` or log statements that would write queries to the gateway security path
+- [ ] Run `git add core/mcp/server.py` and `git commit -m "feat(mcp): add input validation and error handling [5.1.3]"`
+
+**Completion Notes**: _[to be filled by executor]_
+
+---
+
+### Task 5.2: Testing & Documentation
+
+**Subtask 5.2.1: Write tests for MCP server (Single Session)**
+
+**Prerequisites**:
+- [x] 5.1.3: Add input validation and security caps
+
+**Deliverables**:
+- [ ] Create `tests/mcp/__init__.py`
+- [ ] Create `tests/mcp/test_server.py` with unit tests
+- [ ] Test knowledge_search with mocked rag functions
+- [ ] Test input validation (top_k clamping, query truncation)
+- [ ] Test error handling (ChromaDB connection failure)
+- [ ] Test list_domains returns config values
+- [ ] Run full test suite: `pytest tests/ -v`
+
+**Files to Create**:
+- `tests/mcp/__init__.py`: empty file
+
+- `tests/mcp/test_server.py`:
+```python
+"""Tests for Praxis MCP server."""
+
+import pytest
+from unittest.mock import patch, MagicMock
+
+
+class TestKnowledgeSearch:
+    @patch("core.mcp.server.retrieve")
+    @patch("core.mcp.server.format_context")
+    @patch("core.mcp.server.extract_sources")
+    def test_basic_search(self, mock_extract, mock_format, mock_retrieve):
+        from core.mcp.server import knowledge_search
+
+        mock_retrieve.return_value = [
+            {"id": "c1", "text": "test", "source": "s1", "section": "sec",
+             "control_id": "AC-1", "control_title": "Access Control", "distance": 0.1}
+        ]
+        mock_format.return_value = "[Source 1] s1 — sec\ntest"
+        mock_extract.return_value = [{"source": "s1", "section": "sec", "control_id": "AC-1", "control_title": "Access Control", "page": ""}]
+
+        result = knowledge_search("access control", top_k=5)
+        assert "context" in result
+        assert "sources" in result
+        mock_retrieve.assert_called_once_with("access control", top_k=5)
+
+    @patch("core.mcp.server.retrieve")
+    @patch("core.mcp.server.format_context")
+    @patch("core.mcp.server.extract_sources")
+    def test_top_k_capped_at_25(self, mock_extract, mock_format, mock_retrieve):
+        from core.mcp.server import knowledge_search
+
+        mock_retrieve.return_value = []
+        knowledge_search("test", top_k=100)
+        mock_retrieve.assert_called_once_with("test", top_k=25)
+
+    @patch("core.mcp.server.retrieve")
+    @patch("core.mcp.server.format_context")
+    @patch("core.mcp.server.extract_sources")
+    def test_top_k_minimum_1(self, mock_extract, mock_format, mock_retrieve):
+        from core.mcp.server import knowledge_search
+
+        mock_retrieve.return_value = []
+        knowledge_search("test", top_k=0)
+        mock_retrieve.assert_called_once_with("test", top_k=1)
+
+    @patch("core.mcp.server.retrieve")
+    def test_query_truncated(self, mock_retrieve):
+        from core.mcp.server import knowledge_search
+
+        mock_retrieve.return_value = []
+        long_query = "x" * 3000
+        knowledge_search(long_query)
+        actual_query = mock_retrieve.call_args[0][0]
+        assert len(actual_query) == 2000
+
+    @patch("core.mcp.server.retrieve")
+    @patch("core.mcp.server.format_context")
+    @patch("core.mcp.server.extract_sources")
+    def test_empty_results(self, mock_extract, mock_format, mock_retrieve):
+        from core.mcp.server import knowledge_search
+
+        mock_retrieve.return_value = []
+        result = knowledge_search("nonexistent topic")
+        assert "No relevant results" in result["context"]
+        assert result["sources"] == []
+
+    @patch("core.mcp.server.retrieve", side_effect=Exception("ChromaDB connection failed"))
+    def test_chromadb_error_handled(self, mock_retrieve):
+        from core.mcp.server import knowledge_search
+
+        result = knowledge_search("test")
+        assert result.get("error") is True
+        assert "failed" in result["context"].lower()
+
+
+class TestListDomains:
+    @patch("core.mcp.server._load_config")
+    def test_returns_config(self, mock_config):
+        from core.mcp.server import list_domains
+
+        mock_config.return_value = {"rag": {"collection": "cmmc", "chroma_path": "data/chroma"}}
+        result = list_domains()
+        assert result["collection"] == "cmmc"
+
+
+class TestServerSetup:
+    def test_server_name(self):
+        from core.mcp.server import mcp
+        assert mcp.name == "Praxis"
+```
+
+**Success Criteria**:
+- [ ] `pytest tests/mcp/ -v` passes all tests
+- [ ] Tests cover: basic search, top_k clamping (high and low), query truncation, empty results, error handling, list_domains, server name
+- [ ] `pytest tests/ -v` passes all tests (wiki + mcp combined)
+- [ ] `grep -r "TODO\|FIXME" core/mcp/` returns no matches
+- [ ] Run `git add tests/mcp/` and `git commit -m "test(mcp): add MCP server unit tests [5.2.1]"`
+
+**Completion Notes**: _[to be filled by executor]_
+
+---
+
+**Subtask 5.2.2: Add "Connect a coding agent" docs to getting-started.md (Single Session)**
+
+**Prerequisites**:
+- [x] 5.2.1: Write tests for MCP server
+
+**Deliverables**:
+- [ ] Add "## Connect a Coding Agent" section to `docs/getting-started.md`
+- [ ] Document stdio configuration for Claude Code (`.mcp.json` snippet)
+- [ ] Document streamable-HTTP configuration for shared instances
+- [ ] Note that SSE is intentionally unsupported
+
+**Content to append to `docs/getting-started.md`**:
+```markdown
+## Connect a Coding Agent
+
+Praxis exposes its knowledge base as an MCP server, so coding agents (Claude
+Code, Cursor, etc.) can query grounded documentation instead of guessing at
+API syntax.
+
+### Local (stdio) — for a single editor
+
+Start the MCP server as a subprocess of your editor:
+
+```json
+// .mcp.json (Claude Code) or equivalent
+{
+  "mcpServers": {
+    "praxis": { "command": "praxis", "args": ["mcp", "stdio"] }
+  }
+}
+```
+
+### Shared instance (streamable-HTTP) — for a team
+
+Run the server on a shared host:
+
+```bash
+praxis mcp http --port 8790
+```
+
+Then configure each editor to connect:
+
+```json
+{
+  "mcpServers": {
+    "praxis": { "type": "streamableHttp", "url": "http://your-host:8790/mcp" }
+  }
+}
+```
+
+### Available tools
+
+- **`knowledge_search`** — Search the knowledge base. Returns ranked context
+  passages with source attribution. Use this for compliance controls, API syntax,
+  domain-specific documentation, and anything else indexed in Praxis.
+  - `query` (str): Natural language search query.
+  - `top_k` (int, optional): Number of results (1-25, default 10).
+
+- **`list_domains`** — List the configured knowledge domain(s) so the agent
+  knows what corpora are available.
+
+### Note on transports
+
+Praxis MCP supports **stdio** and **streamable-HTTP** only. SSE transport is
+intentionally excluded due to connection stability issues in long-running agent
+sessions.
+```
+
+**Success Criteria**:
+- [ ] `docs/getting-started.md` has a "Connect a Coding Agent" section
+- [ ] Both stdio and streamable-HTTP configurations are documented with copy-paste snippets
+- [ ] SSE exclusion is noted
+- [ ] Tool descriptions match the actual `knowledge_search` and `list_domains` signatures
+- [ ] Run `git add docs/getting-started.md` and `git commit -m "docs: add coding agent connection guide [5.2.2]"`
+- [ ] Run `git push -u origin feature/5.1-mcp-server`
+
+**Completion Notes**: _[to be filled by executor]_
+
+---
+
+### Task 5.1-5.2 Complete — Squash Merge
+
+```bash
+git checkout main && git pull origin main
+git merge --squash feature/5.1-mcp-server
+git commit -m "feat: MCP server frontend with knowledge_search tool, stdio + streamable-HTTP transports"
+git push origin main
+git branch -d feature/5.1-mcp-server
+```
+
+---
+
 ## v2 Roadmap (Post-MVP Features)
 
 ### v2.1: Interactive knowledge graph visualization
@@ -2021,6 +2514,14 @@ git branch -d feature/4.1-rag-cli
 ### v2.4: Task queue + DLQ for large knowledge bases (40K+ docs)
 **Status**: Deferred — implement after MVP
 **Scope**: Celery or asyncio task queue, dead letter queue for failed generations, progress tracking
+
+### v2.5: MCP server enhancements
+**Status**: Deferred — implement after Phase 5
+**Scope**:
+- Make Ollama base URL in `rag.py` config-driven (currently hardcoded to `http://100.87.147.89:11434`)
+- Index Microsoft Graph REST docs as a Praxis domain for agent Graph queries
+- Multi-collection / domain routing if more than one corpus is served at once
+- Tighten all `requirements.txt` pins from `>=` to `==` (currently only `fastmcp` is exact-pinned)
 
 ---
 
