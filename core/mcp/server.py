@@ -30,7 +30,14 @@ def knowledge_search(query: str, top_k: int = 10) -> dict:
     if len(query) > 2000:
         query = query[:2000]
 
-    chunks = retrieve(query, top_k=top_k)
+    try:
+        chunks = retrieve(query, top_k=top_k)
+    except Exception as e:
+        return {
+            "context": f"Knowledge search failed: {type(e).__name__}",
+            "sources": [],
+            "error": True,
+        }
 
     if not chunks:
         return {
