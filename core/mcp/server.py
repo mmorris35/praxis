@@ -13,7 +13,7 @@ mcp = FastMCP(
 
 
 @mcp.tool
-def knowledge_search(query: str, top_k: int = 10) -> dict:
+def knowledge_search(query: str, top_k: int = None) -> dict:
     """Search the Praxis knowledge base for documentation, controls, and API syntax.
 
     Returns ranked context passages with source attribution. Use this instead of
@@ -21,10 +21,12 @@ def knowledge_search(query: str, top_k: int = 10) -> dict:
 
     Args:
         query: Natural language search query (e.g. "MS Graph $filter syntax for users").
-        top_k: Number of results to return (1-25, default 10).
+        top_k: Number of results to return (1-25, default from gateway.yaml).
     """
-    from core.gateway.rag import retrieve, format_context, extract_sources
+    from core.gateway.rag import retrieve, format_context, extract_sources, _load_config
 
+    if top_k is None:
+        top_k = _load_config()["rag"].get("top_k", 10)
     top_k = max(1, min(top_k, 25))
 
     if len(query) > 2000:

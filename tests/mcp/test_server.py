@@ -3,6 +3,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
 
+MOCK_CONFIG = {"rag": {"collection": "praxis", "chroma_path": "data/chroma", "top_k": 12}}
+
 
 class TestKnowledgeSearch:
     @patch("core.gateway.rag.retrieve")
@@ -43,8 +45,18 @@ class TestKnowledgeSearch:
         knowledge_search("test", top_k=0)
         mock_retrieve.assert_called_once_with("test", top_k=1)
 
+    @patch("core.gateway.rag._load_config", return_value=MOCK_CONFIG)
     @patch("core.gateway.rag.retrieve")
-    def test_query_truncated(self, mock_retrieve):
+    def test_top_k_default_from_config(self, mock_retrieve, mock_config):
+        from core.mcp.server import knowledge_search
+
+        mock_retrieve.return_value = []
+        knowledge_search("test")
+        mock_retrieve.assert_called_once_with("test", top_k=12)
+
+    @patch("core.gateway.rag._load_config", return_value=MOCK_CONFIG)
+    @patch("core.gateway.rag.retrieve")
+    def test_query_truncated(self, mock_retrieve, mock_config):
         from core.mcp.server import knowledge_search
 
         mock_retrieve.return_value = []
@@ -53,10 +65,11 @@ class TestKnowledgeSearch:
         actual_query = mock_retrieve.call_args[0][0]
         assert len(actual_query) == 2000
 
+    @patch("core.gateway.rag._load_config", return_value=MOCK_CONFIG)
     @patch("core.gateway.rag.retrieve")
     @patch("core.gateway.rag.format_context")
     @patch("core.gateway.rag.extract_sources")
-    def test_empty_results(self, mock_extract, mock_format, mock_retrieve):
+    def test_empty_results(self, mock_extract, mock_format, mock_retrieve, mock_config):
         from core.mcp.server import knowledge_search
 
         mock_retrieve.return_value = []
@@ -64,8 +77,9 @@ class TestKnowledgeSearch:
         assert "No relevant results" in result["context"]
         assert result["sources"] == []
 
+    @patch("core.gateway.rag._load_config", return_value=MOCK_CONFIG)
     @patch("core.gateway.rag.retrieve", side_effect=Exception("ChromaDB connection failed"))
-    def test_chromadb_error_handled(self, mock_retrieve):
+    def test_chromadb_error_handled(self, mock_retrieve, mock_config):
         from core.mcp.server import knowledge_search
 
         result = knowledge_search("test")

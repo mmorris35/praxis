@@ -14,7 +14,7 @@ def stdio():
     """Run MCP server over stdio (for local editors like Claude Code)."""
     from core.mcp.server import mcp as mcp_server
 
-    click.echo("Starting Praxis MCP server (stdio)...")
+    click.echo("Starting Praxis MCP server (stdio)...", err=True)
     mcp_server.run(transport="stdio")
 
 
