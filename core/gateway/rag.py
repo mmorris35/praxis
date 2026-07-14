@@ -48,7 +48,8 @@ def _load_config():
 def _get_embedding_fn():
     global _embedding_fn
     if _embedding_fn is None:
-        _embedding_fn = OllamaEmbeddingFunction()
+        from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+        _embedding_fn = SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
     return _embedding_fn
 
 

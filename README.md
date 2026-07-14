@@ -213,15 +213,57 @@ flowchart LR
 | Month 1 | 200+ | Handles edge cases |
 | Month 6 | 500+ | Institutional knowledge that can't be replicated |
 
+## MCP Server
+
+**Expose your expert system as tools for Claude Code, VS Code, and other MCP-capable agents.**
+
+The MCP server wraps the RAG retrieval pipeline as standard MCP tools — any agent can query your knowledge base without going through the chat web UI.
+
+### Tools
+
+| Tool | Description |
+|------|-------------|
+| `knowledge_search` | Semantic search across your knowledge base. Returns ranked passages with source attribution. |
+| `list_domains` | List available ChromaDB collections so agents know what's queryable. |
+
+### Usage
+
+```bash
+# stdio transport (Claude Code, local editors)
+praxis mcp stdio
+
+# streamable-HTTP transport (shared instances, remote agents)
+praxis mcp http --port 8790
+```
+
+### Claude Code integration
+
+Add to your `.claude/settings.json` or project `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "praxis": {
+      "command": "python",
+      "args": ["-m", "core.mcp.cli", "stdio"],
+      "cwd": "/path/to/praxis"
+    }
+  }
+}
+```
+
+Agents get `knowledge_search` as a tool — they call it instead of guessing at API syntax, compliance requirements, or domain-specific patterns. Results include source attribution so the agent can cite its answers.
+
 ## Technical Stack
 
 | Component | Technology |
 |-----------|------------|
-| Embeddings | nomic-embed-text via Ollama |
+| Embeddings | SentenceTransformers (all-MiniLM-L6-v2) or nomic-embed-text via Ollama |
 | Vector DB | ChromaDB |
 | RAG | Hybrid search (exact ID + semantic) |
 | LLM | Claude, GPT, or local models |
 | Memory | Nellie-RS (AMP implementation) |
+| MCP | FastMCP (stdio + streamable-HTTP) |
 
 ## Live Demos
 
