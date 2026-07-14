@@ -31,7 +31,7 @@ Structured ingestion of official documentation. Use OSCAL JSON, not PDFs. One co
 Your org's expertise on top of the docs — API mappings, practical shortcuts, what actually works. Not required; you can start with Foundation + Refinements and learn from use.
 
 ### Layer 3: Refinements
-AMP (Agent Memory Protocol) integration via Nellie. Experts refine responses, and those refinements persist for every future query.
+AMP (Agent Memory Protocol) integration via [Nellie](https://github.com/mmorris35/nellie). Experts refine responses, and those refinements persist for every future query.
 
 The more the system is used, the smarter it gets.
 
@@ -262,7 +262,7 @@ Agents get `knowledge_search` as a tool — they call it instead of guessing at 
 | Vector DB | ChromaDB |
 | RAG | Hybrid search (exact ID + semantic) |
 | LLM | Claude, GPT, or local models |
-| Memory | Nellie-RS (AMP implementation) |
+| Memory | [Nellie](https://github.com/mmorris35/nellie) (AMP implementation) |
 | MCP | FastMCP (stdio + streamable-HTTP) |
 
 ## Live Demos
