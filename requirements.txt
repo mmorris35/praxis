@@ -8,6 +8,10 @@ python-dotenv>=1.0.0
 chromadb>=0.4.0
 requests>=2.31.0
 
+# Embeddings & reranking
+sentence-transformers==5.6.1
+torch==2.13.0
+
 # LLM clients
 anthropic>=0.18.0
 openai>=1.10.0
