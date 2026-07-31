@@ -6,9 +6,9 @@ import requests
 import chromadb
 from pathlib import Path
 
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(__file__).parent.parent.parent / "examples" / "cmmc-buddy" / "data"
 STRUCTURED_DIR = DATA_DIR / "structured"
-CHROMA_DIR = DATA_DIR / "chroma"
+CHROMA_DIR = Path(__file__).parent.parent.parent / "examples" / "cmmc-buddy" / "data" / "chroma"
 
 # Load 800-171 to 800-53 mappings
 MAPPING_FILE = STRUCTURED_DIR / "800-171-to-800-53-mapping.json"
@@ -25,18 +25,14 @@ SOURCES = {
     "fedramp-high.json": {"name": "FedRAMP HIGH Baseline", "short": "FedRAMP-HIGH"},
 }
 
-class OllamaEmbedding:
-    def __init__(self, model="nomic-embed-text", base_url="http://100.87.147.89:11434"):
-        self.model = model
-        self.base_url = base_url
+from core.gateway.rag import LocalEmbeddingFunction
+
+class LocalEmbedding:
+    def __init__(self):
+        self._fn = LocalEmbeddingFunction()
     def __call__(self, input):
-        embeddings = []
-        for text in input:
-            resp = requests.post(f"{self.base_url}/api/embeddings", 
-                json={"model": self.model, "prompt": text}, timeout=30)
-            embeddings.append(resp.json()["embedding"])
-        return embeddings
-    def name(self): return "nomic-embed-text"
+        return self._fn(input)
+    def name(self): return self._fn.name()
 
 def normalize_id(oscal_id):
     match = re.search(r'(\d+)\.(\d+)\.(\d+)', oscal_id)
@@ -116,7 +112,7 @@ def main():
     try: client.delete_collection("cmmc-guidelines")
     except: pass
     
-    ef = OllamaEmbedding()
+    ef = LocalEmbedding()
     collection = client.create_collection(name="cmmc-guidelines", embedding_function=ef)
     
     print("Indexing with nomic-embed-text...")
