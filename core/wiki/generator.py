@@ -7,7 +7,7 @@ import anthropic
 from collections import defaultdict
 from datetime import datetime, timezone
 from slugify import slugify
-from core.gateway.rag import OllamaEmbeddingFunction
+from core.gateway.rag import _get_embedding_fn
 from core.wiki.models import WikiConfig, WikiPage, ConceptCluster
 
 logger = logging.getLogger("praxis.wiki")
@@ -31,10 +31,7 @@ class WikiGenerator:
         if self._collection is None:
             if self._client is None:
                 self._client = chromadb.PersistentClient(path=self.config.chroma_path)
-            embedding_fn = OllamaEmbeddingFunction(
-                model=self.config.embedding_model,
-                base_url=self.config.ollama_url,
-            )
+            embedding_fn = _get_embedding_fn()
             self._collection = self._client.get_collection(
                 name=self.config.collection_name,
                 embedding_function=embedding_fn,

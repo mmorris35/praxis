@@ -5,7 +5,7 @@ import json
 import requests
 from typing import Optional
 
-NELLIE_URL = os.environ.get("AMP_SERVER_URL", "http://100.87.147.89:8765")
+NELLIE_URL = os.environ.get("AMP_SERVER_URL", "http://100.87.147.88:8765")
 AGENT_NAME = os.environ.get("AMP_AGENT", "cmmc-buddy")
 
 

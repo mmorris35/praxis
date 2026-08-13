@@ -1,26 +1,14 @@
 #!/usr/bin/env python3
 """Ingest CMMC objectives with Graph API mapping."""
 import json
-import requests
 import chromadb
 from pathlib import Path
+from core.gateway.rag import LocalEmbeddingFunction
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 STRUCTURED_DIR = DATA_DIR / "structured"
 CHROMA_DIR = DATA_DIR / "chroma"
 
-class OllamaEmbedding:
-    def __init__(self, model="nomic-embed-text", base_url="http://100.87.147.89:11434"):
-        self.model = model
-        self.base_url = base_url
-    def __call__(self, input):
-        embeddings = []
-        for text in input:
-            resp = requests.post(f"{self.base_url}/api/embeddings", 
-                json={"model": self.model, "prompt": text}, timeout=30)
-            embeddings.append(resp.json()["embedding"])
-        return embeddings
-    def name(self): return "nomic-embed-text"
 
 def main():
     # Load objectives
@@ -110,7 +98,7 @@ def main():
     
     # Add to existing collection
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
-    ef = OllamaEmbedding()
+    ef = LocalEmbeddingFunction()
     
     collection = client.get_collection("cmmc-guidelines", embedding_function=ef)
     

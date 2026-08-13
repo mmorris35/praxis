@@ -1,6 +1,5 @@
 import os
 import re
-import requests
 import chromadb
 import yaml
 from pathlib import Path
@@ -30,6 +29,7 @@ class LocalEmbeddingFunction(EmbeddingFunction):
 
     def name(self) -> str:
         return f"st-{self._model_name}"
+
 
 
 def _load_config():
