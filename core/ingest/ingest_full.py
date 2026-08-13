@@ -2,9 +2,9 @@
 """Full ingest with mappings and all frameworks."""
 import json
 import re
-import requests
 import chromadb
 from pathlib import Path
+from core.gateway.rag import LocalEmbeddingFunction
 
 DATA_DIR = Path(__file__).parent.parent.parent / "examples" / "cmmc-buddy" / "data"
 STRUCTURED_DIR = DATA_DIR / "structured"
@@ -25,14 +25,6 @@ SOURCES = {
     "fedramp-high.json": {"name": "FedRAMP HIGH Baseline", "short": "FedRAMP-HIGH"},
 }
 
-from core.gateway.rag import LocalEmbeddingFunction
-
-class LocalEmbedding:
-    def __init__(self):
-        self._fn = LocalEmbeddingFunction()
-    def __call__(self, input):
-        return self._fn(input)
-    def name(self): return self._fn.name()
 
 def normalize_id(oscal_id):
     match = re.search(r'(\d+)\.(\d+)\.(\d+)', oscal_id)
@@ -107,15 +99,15 @@ def main():
     
     print(f"\nTotal: {len(all_chunks)} controls")
     
-    # Create collection with nomic embeddings
+    # Create collection with local SentenceTransformer (all-MiniLM-L6-v2) — matches the gateway query side
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
     try: client.delete_collection("cmmc-guidelines")
     except: pass
-    
-    ef = LocalEmbedding()
+
+    ef = LocalEmbeddingFunction()
     collection = client.create_collection(name="cmmc-guidelines", embedding_function=ef)
-    
-    print("Indexing with nomic-embed-text...")
+
+    print("Indexing with all-MiniLM-L6-v2 (local)...")
     batch_size = 50
     for i in range(0, len(all_chunks), batch_size):
         batch = all_chunks[i:i+batch_size]

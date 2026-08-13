@@ -11,8 +11,7 @@ class WikiConfig(BaseModel):
     output_dir: Path = Field(default=Path("wiki"))
     collection_name: str = Field(default="praxis")
     chroma_path: str = Field(default="data/chroma")
-    embedding_model: str = Field(default="nomic-embed-text")
-    ollama_url: str = Field(default="http://localhost:11434")
+    embedding_model: str = Field(default="all-MiniLM-L6-v2")
     llm_model: str = Field(default_factory=lambda: os.environ.get("PRAXIS_LLM_MODEL", "claude-sonnet-4-20250514"))
     max_chunks_per_page: int = Field(default=10)
 
